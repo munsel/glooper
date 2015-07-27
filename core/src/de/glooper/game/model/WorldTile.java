@@ -1,5 +1,7 @@
 package de.glooper.game.model;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
+
 /**
  * Created by vincent on 18.07.15.
  */
@@ -9,6 +11,14 @@ public class WorldTile implements IWorldTile {
     private ITileStrategy rightStrategy;
     private ITileStrategy upStrategy;
     private ITileStrategy downStrategy;
+
+    private Sprite sprite;
+
+    public WorldTile(){
+
+
+    }
+
 
     public void setLeftStrategy(ITileStrategy leftStrategy) {
         this.leftStrategy = leftStrategy;
@@ -26,6 +36,10 @@ public class WorldTile implements IWorldTile {
         this.downStrategy = downStrategy;
     }
 
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
+    }
+
     public ITileStrategy getLeftStrategy() {
         return leftStrategy;
     }
@@ -40,5 +54,9 @@ public class WorldTile implements IWorldTile {
 
     public ITileStrategy getDownStrategy() {
         return downStrategy;
+    }
+
+    public Sprite getSprite() {
+        return sprite;
     }
 }

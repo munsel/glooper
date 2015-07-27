@@ -11,4 +11,6 @@ public class TileStrategy implements ITileStrategy {
     void setCondition(Condition c) {
         this.condition = c;
     }
+
+
 }

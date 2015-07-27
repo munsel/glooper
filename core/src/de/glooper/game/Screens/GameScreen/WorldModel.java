@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.Screens.GameScreen.Characters.Glooper;
+import de.glooper.game.model.WorldTile;
 
 /**
  * Created by munsel on 06.06.15.
@@ -15,6 +16,7 @@ public class WorldModel implements Disposable{
 
     private World world;
     private Glooper glooper;
+
 
     public WorldModel(){
         world = new World(new Vector2(0,0), false);
@@ -44,7 +46,7 @@ public class WorldModel implements Disposable{
         glooper.setAngularVelocity( -(glooper.getAbsoluteOmega()) );
     }
 
-    public Array<Sprite> getSprites(){
+    public Array<Sprite> getAllSpritesToDraw(){
         Array<Sprite> sprites = new Array<Sprite>();
         sprites.add(glooper.getSprite());
         return sprites;
