@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.Disposable;
 public class Renderer implements Disposable {
 
     private WorldModel model;
-    private Box2DDebugRenderer debugRenderer;
+    //private Box2DDebugRenderer debugRenderer;
     private World world;
     private OrthographicCamera camera;
     private SpriteBatch batch;
