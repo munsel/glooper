@@ -23,14 +23,14 @@ public class Renderer implements Disposable {
         camera = new OrthographicCamera(8f,4.8f);
         batch = new SpriteBatch();
 
-        debugRenderer = new Box2DDebugRenderer();
+        //debugRenderer = new Box2DDebugRenderer();
         world = model.getWorld();
     }
 
     public void render(float deltaTime){
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        debugRenderer.render(world, camera.combined);
+        //debugRenderer.render(world, camera.combined);
 
         batch.begin();
         for (Sprite sprite : model.getSprites()){
