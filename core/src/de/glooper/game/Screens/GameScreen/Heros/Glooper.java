@@ -1,15 +1,17 @@
-package de.glooper.game.Screens.GameScreen.Characters;
+package de.glooper.game.Screens.GameScreen.Heros;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
+
 /**
  * Created by munsel on 15.06.15.
  */
-public class Glooper {
+public class Glooper implements IHero {
 
     private static final String TAG = Glooper.class.getSimpleName();
 
@@ -70,6 +72,7 @@ public class Glooper {
      * Sprite stuff
      */
     private Sprite sprite;
+    private Animation animation;
 
 
     public Glooper(World world) {
@@ -116,6 +119,7 @@ public class Glooper {
 
 
 
+    @Override
     public void update(float deltaTime) {
         //update body data
         //movement of the body
@@ -139,6 +143,16 @@ public class Glooper {
         //align sprite position according to body
         sprite.setPosition(body.getPosition().x-(2*radius), body.getPosition().y-(radius));
         sprite.setRotation(angle*MathUtils.radiansToDegrees);
+
+    }
+
+    @Override
+    public void touchDownAction() {
+
+    }
+
+    @Override
+    public void touchUpAction() {
 
     }
 

@@ -7,19 +7,16 @@ public class DynamicNineTileWorld implements IDynamicWorld{
 
     private IWorldTile[] worldtiles;
 
-    private static volatile DynamicNineTileWorld instance;
+    private static  DynamicNineTileWorld instance;
 
     private DynamicNineTileWorld() {
+        init();
 
     }
     public static DynamicNineTileWorld getInstance() {
-        if (instance == null) {
-            synchronized (instance) {
-                if (instance == null) {
-                    instance = new DynamicNineTileWorld();
-                }
-            }
-        }
+        if (instance == null)
+                instance = new DynamicNineTileWorld();
+
         return instance;
     }
 

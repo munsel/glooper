@@ -1,5 +1,7 @@
 package de.glooper.game.model;
 
+import com.badlogic.gdx.utils.Array;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
  */
 public class WorldTileFactory {
 
-    private List<IWorldTile> tiles = new ArrayList<IWorldTile>();
+    private Array<IWorldTile> tiles = new Array<IWorldTile>();
     private ITileStrategyComparator comp;
     private static volatile WorldTileFactory instance;
 

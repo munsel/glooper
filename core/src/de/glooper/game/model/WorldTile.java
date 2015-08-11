@@ -1,11 +1,15 @@
 package de.glooper.game.model;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.utils.Disposable;
 
 /**
  * Created by vincent on 18.07.15.
  */
-public class WorldTile implements IWorldTile {
+public class WorldTile implements IWorldTile, Disposable{
+    private static final String TAG = WorldTile.class.getSimpleName();
+
 
     private ITileStrategy leftStrategy;
     private ITileStrategy rightStrategy;
@@ -14,7 +18,8 @@ public class WorldTile implements IWorldTile {
 
     private Sprite sprite;
 
-    public WorldTile(){
+    public WorldTile(Texture texture){
+        sprite = new Sprite(texture);
 
 
     }
@@ -58,5 +63,9 @@ public class WorldTile implements IWorldTile {
 
     public Sprite getSprite() {
         return sprite;
+    }
+
+    @Override
+    public void dispose() {
     }
 }
