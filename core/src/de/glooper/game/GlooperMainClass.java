@@ -1,6 +1,7 @@
 package de.glooper.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import de.glooper.game.Screens.GameScreen.GameScreen;
 
 public class GlooperMainClass extends Game {
@@ -14,6 +15,7 @@ public class GlooperMainClass extends Game {
 	*
 	 */
 	public void create () {
+		Gdx.graphics.setDisplayMode( 800,480, false);
 		setScreen(new GameScreen(this));
 
 

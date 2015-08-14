@@ -1,6 +1,8 @@
 package de.glooper.game.model;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.utils.Array;
+import de.glooper.game.Screens.GameScreen.HelperClasses.AssetHandler;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -13,21 +15,35 @@ public class WorldTileFactory {
 
     private Array<IWorldTile> tiles = new Array<IWorldTile>();
     private ITileStrategyComparator comp;
-    private static volatile WorldTileFactory instance;
+    private static WorldTileFactory instance;
+
 
     private WorldTileFactory() {
+        AssetHandler.instance.init(new AssetManager());
 
     }
     public static WorldTileFactory getInstance() {
         if (instance == null) {
-            synchronized (instance) {
-                if (instance == null) {
+
                     instance = new WorldTileFactory();
-                }
+
             }
-        }
+
         return instance;
     }
+
+    /**
+     * this gets called when the game will be initialized
+     * @return the start tile, which must have been loaded by
+     * the assethandler firstly
+     */
+    public IWorldTile getStartTile(){
+
+
+        return new WorldTile(AssetHandler.instance.firstWorldTileAsset.getTexture(),
+                0,0,0,0);
+    }
+
     public IWorldTile getWorldTile(IWorldTile neighbour){
 
         int i = 0;

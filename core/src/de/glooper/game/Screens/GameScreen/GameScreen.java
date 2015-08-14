@@ -2,9 +2,11 @@ package de.glooper.game.Screens.GameScreen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.uwsoft.editor.renderer.resources.ResourceManager;
 import de.glooper.game.GlooperMainClass;
+import de.glooper.game.Screens.GameScreen.HelperClasses.AssetHandler;
 
 /**
  * Created by munsel on 06.06.15.
@@ -24,13 +26,20 @@ public class GameScreen implements Screen {
 
 
 
+
     public GameScreen(GlooperMainClass mainClass){
         super();
+
+
+
+
+
 
         model = new WorldModel();
         controller = new Controller(model);
         renderer = new Renderer(model);
         Gdx.input.setInputProcessor(controller);
+
 
 
     }

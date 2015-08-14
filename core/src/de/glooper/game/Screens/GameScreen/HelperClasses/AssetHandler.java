@@ -24,6 +24,8 @@ public class AssetHandler implements Disposable, AssetErrorListener {
      */
     private static final String TAG = AssetHandler.class.getSimpleName();
 
+    public static  AssetHandler instance = new AssetHandler();
+
 
 
     /**
@@ -31,7 +33,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
      * simple worldTiles set
      */
 
-    public static final String simpleTilesDirectoryName = "worldtiles/simple/";
+    public static final String simpleTilesDirectoryName = "/simple/  ";
     public static final String[] names={"leftTurn", "rightTurn",
             "tCross", "xCross", "straight"};
 
@@ -59,16 +61,17 @@ public class AssetHandler implements Disposable, AssetErrorListener {
          * so only one image of 2048px * 2048px in merory
          * therefore, a x cross with four openings will be used
          */
-        assetManager.load(simpleTilesDirectoryName + names[3], Texture.class);
+        assetManager.load("simple/xCrossSmall.png",Texture.class);
         /**
          * but now we must direct the corresponding
          * Textures handled by the assetManager
          * ... in runtime
          */
         assetManager.finishLoading();
-
-        Texture startTileTexture = assetManager.get(simpleTilesDirectoryName+names[3]);
+        Texture startTileTexture = assetManager.get("simple/xCrossSmall.png", Texture.class);
+        startTileTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         firstWorldTileAsset = new XCross(startTileTexture);
+
     }
 
 

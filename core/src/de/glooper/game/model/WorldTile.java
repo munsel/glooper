@@ -2,6 +2,7 @@ package de.glooper.game.model;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
 /**
@@ -10,16 +11,27 @@ import com.badlogic.gdx.utils.Disposable;
 public class WorldTile implements IWorldTile, Disposable{
     private static final String TAG = WorldTile.class.getSimpleName();
 
+    public final static float TILE_SIZE = 16f;
+
 
     private ITileStrategy leftStrategy;
     private ITileStrategy rightStrategy;
     private ITileStrategy upStrategy;
     private ITileStrategy downStrategy;
 
-    private Sprite sprite;
+    private float xPos, yPos;
+    private float xPosOld, yPosOld;
 
-    public WorldTile(Texture texture){
-        sprite = new Sprite(texture);
+    private Sprite backgroundSprite;
+
+    public WorldTile(Texture texture, float x, float y, float xOld, float yOld){
+        backgroundSprite = new Sprite(texture);
+        xPos = x;
+        yPos = y;
+        xPosOld = xOld;
+        yPosOld = yOld;
+        backgroundSprite.setPosition(xPos, yPos);
+        backgroundSprite.setSize(TILE_SIZE, TILE_SIZE);
 
 
     }
@@ -42,7 +54,7 @@ public class WorldTile implements IWorldTile, Disposable{
     }
 
     public void setSprite(Sprite sprite) {
-        this.sprite = sprite;
+        this.backgroundSprite = sprite;
     }
 
     public ITileStrategy getLeftStrategy() {
@@ -61,9 +73,14 @@ public class WorldTile implements IWorldTile, Disposable{
         return downStrategy;
     }
 
-    public Sprite getSprite() {
-        return sprite;
+    @Override
+    public Array<Sprite> getSprites() {
+        Array<Sprite> sprites = new Array<Sprite>();
+        sprites.add(backgroundSprite);
+        return sprites;
     }
+
+
 
     @Override
     public void dispose() {
