@@ -41,8 +41,9 @@ public class WorldModel implements Disposable {
 
 
 
-        dynamicTileWorld = DynamicTileWorld.getInstance();
+
         world = new World(new Vector2(0,0), false);
+        dynamicTileWorld = DynamicTileWorld.getInstance(world);
         glooper = new Glooper(world);
 
         cameraHelper = new CameraHelper(this);

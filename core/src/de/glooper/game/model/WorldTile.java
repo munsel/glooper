@@ -1,7 +1,10 @@
 package de.glooper.game.model;
 
+import aurelienribon.bodyeditor.BodyEditorLoader;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -13,6 +16,17 @@ public class WorldTile implements IWorldTile, Disposable{
 
     public final static float TILE_SIZE = 16f;
 
+    /**
+     * this is needed for the checks and to mark, which
+     * side must be open
+     */
+    public enum DIRECTION{UP, DOWN, LEFT, RIGHT}
+
+    /**
+     * this is to determine a type of difficulty
+     * for future use
+     */
+    public enum TYPE{START, ONE_MIN, THREE_MIN, FIVE_MIN}
 
     private ITileStrategy leftStrategy;
     private ITileStrategy rightStrategy;
@@ -23,15 +37,42 @@ public class WorldTile implements IWorldTile, Disposable{
     private float xPosOld, yPosOld;
 
     private Sprite backgroundSprite;
+    private Body body;
+    private World world;
 
-    public WorldTile(Texture texture, float x, float y, float xOld, float yOld){
+    public WorldTile(Texture texture,
+                     String bodyFileName, World world,
+                     float x, float y, float xOld, float yOld,
+                     String directoryName){
         backgroundSprite = new Sprite(texture);
         xPos = x;
         yPos = y;
         xPosOld = xOld;
         yPosOld = yOld;
+        //Sprite settings
         backgroundSprite.setPosition(xPos, yPos);
         backgroundSprite.setSize(TILE_SIZE, TILE_SIZE);
+
+        //Body settings
+        this.world = world;
+//        BodyEditorLoader loader = new BodyEditorLoader(directoryName);
+
+        BodyDef bd = new BodyDef();
+        bd.position.set(x+TILE_SIZE/2, y+TILE_SIZE/2);
+        bd.type = BodyDef.BodyType.StaticBody;
+
+        FixtureDef fd = new FixtureDef();
+        fd.friction = 1;
+        fd.restitution = 0;
+
+        //body = world.createBody(bd);
+
+        //loader.attachFixture(body, bodyFileName, fd,TILE_SIZE);
+
+
+
+
+
 
 
     }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -15,7 +16,7 @@ import com.badlogic.gdx.utils.Disposable;
 public class Renderer implements Disposable {
 
     private WorldModel model;
-    //private Box2DDebugRenderer debugRenderer;
+    private Box2DDebugRenderer debugRenderer;
     private World world;
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -26,14 +27,14 @@ public class Renderer implements Disposable {
         camera = model.getCamera();
         batch = new SpriteBatch();
 
-        //debugRenderer = new Box2DDebugRenderer();
+        debugRenderer = new Box2DDebugRenderer();
         world = model.getWorld();
     }
 
     public void render(float deltaTime){
 
         batch.setProjectionMatrix(camera.combined);
-        //debugRenderer.render(world, camera.combined);
+        debugRenderer.render(world, camera.combined);
 
         batch.begin();
         for (Sprite sprite : model.getBackgroundSpritesToDraw()){

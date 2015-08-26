@@ -5,6 +5,11 @@ package de.glooper.game.model;
  */
 public class TileStrategy implements ITileStrategy {
 
+    @Override
+    public boolean isEntrance() {
+        return false;
+    }
+
     enum Condition{WATER, ROCK}
     Condition condition;
     

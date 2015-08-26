@@ -1,6 +1,7 @@
 package de.glooper.game.model;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import de.glooper.game.Screens.GameScreen.HelperClasses.AssetHandler;
 
@@ -13,9 +14,10 @@ import java.util.List;
  */
 public class WorldTileFactory {
 
-    private Array<IWorldTile> tiles = new Array<IWorldTile>();
     private ITileStrategyComparator comp;
     private static WorldTileFactory instance;
+
+
 
 
     private WorldTileFactory() {
@@ -37,20 +39,31 @@ public class WorldTileFactory {
      * @return the start tile, which must have been loaded by
      * the assethandler firstly
      */
-    public IWorldTile getStartTile(){
+    public IWorldTile getStartTile(World world){
 
 
         return new WorldTile(AssetHandler.instance.firstWorldTileAsset.getTexture(),
-                0,0,0,0);
+                "xCross",world,0,0,0,0,"WorldTiles/simple/simple.json");
     }
 
-    public IWorldTile getWorldTile(IWorldTile neighbour){
+    /**
+     *
+     * @param x and
+     * @param y are the coordinates of the new tile
+     * @param direction is the side, that must be open
+     *                  according to the direction, this method
+     *                  should create a new WorldTile, that fits
+     * @return
+     */
+    public IWorldTile getWorldTile(float x, float y, WorldTile.DIRECTION direction){
 
-        int i = 0;
-        //while(comp.compare(tiles.get(i).getRightStrategy(), neighbour.getLeftStrategy())) {
-        //    i++;
-       // }
 
+        /*
+
+        IWorldTile newTile = new WorldTile(AssetHandler.instance.secondWolrdTileAsset.getTexture()
+                ,x,y,
+                )
+        */
 
         return null;
     }

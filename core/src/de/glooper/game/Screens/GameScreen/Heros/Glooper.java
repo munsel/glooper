@@ -83,8 +83,8 @@ public class Glooper implements IHero {
         velocity = 2;
         angularVelocity = 2;
 
-        wiggleAmplitude = 0.6f;
-        wiggleFrequency = 12;
+        wiggleAmplitude = 0.3f;
+        wiggleFrequency = 14;
         wiggling = false;
 
         BodyDef bdef = new BodyDef();
@@ -123,8 +123,8 @@ public class Glooper implements IHero {
     public void update(float deltaTime) {
         //update body data
         //movement of the body
-        timeAlive += deltaTime;
-        if (timeAlive > 5) wiggling=true;
+        timeAlive += 1f/60f;//deltaTime;
+        if (timeAlive > 15) wiggling=true;
         float angle = body.getAngle();
         float x = MathUtils.cos(angle);
         float y = MathUtils.sin(angle);
