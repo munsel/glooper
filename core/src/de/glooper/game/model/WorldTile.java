@@ -1,12 +1,14 @@
 package de.glooper.game.model;
 
-import aurelienribon.bodyeditor.BodyEditorLoader;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.JsonReader;
+import libs.BodyEditorLoader;
 
 /**
  * Created by vincent on 18.07.15.
@@ -55,19 +57,21 @@ public class WorldTile implements IWorldTile, Disposable{
 
         //Body settings
         this.world = world;
-//        BodyEditorLoader loader = new BodyEditorLoader(directoryName);
+       BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal( "WorldTiles/"+directoryName+"/"+directoryName+".json"));
 
         BodyDef bd = new BodyDef();
-        bd.position.set(x+TILE_SIZE/2, y+TILE_SIZE/2);
+        bd.position.set(x, y);
         bd.type = BodyDef.BodyType.StaticBody;
 
         FixtureDef fd = new FixtureDef();
-        fd.friction = 1;
+        fd.friction = 0.f;
         fd.restitution = 0;
 
-        //body = world.createBody(bd);
+        body = world.createBody(bd);
 
-        //loader.attachFixture(body, bodyFileName, fd,TILE_SIZE);
+
+        loader.attachFixture(body, /*"WorldTiles/" + directoryName + "/"+*/bodyFileName, fd,TILE_SIZE);
+
 
 
 

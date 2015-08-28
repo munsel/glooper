@@ -43,7 +43,7 @@ public class WorldTileFactory {
 
 
         return new WorldTile(AssetHandler.instance.firstWorldTileAsset.getTexture(),
-                "xCross",world,0,0,0,0,"WorldTiles/simple/simple.json");
+                "xCross",world,0,0,0,0,"starters");
     }
 
     /**

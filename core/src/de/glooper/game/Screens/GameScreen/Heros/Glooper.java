@@ -1,17 +1,22 @@
 package de.glooper.game.Screens.GameScreen.Heros;
 
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Disposable;
 
 
 /**
  * Created by munsel on 15.06.15.
  */
-public class Glooper implements IHero {
+public class Glooper implements IHero, Disposable {
 
     private static final String TAG = Glooper.class.getSimpleName();
 
@@ -30,6 +35,7 @@ public class Glooper implements IHero {
     private float absoluteOmega;
     private float velocity;
     private float angularVelocity;
+    private float currentAngularVelocity;
 
     private  boolean wiggling;
 
@@ -65,8 +71,15 @@ public class Glooper implements IHero {
      */
 
     private World world;
-
     private Body body;
+
+    /**
+     * box2D lights stuff
+     */
+    private RayHandler rayHandler;
+    private PointLight lamp;
+    private final int RAYS_NUM = 500;
+    private float lightDistance = 5;
 
     /**
      * Sprite stuff
@@ -74,14 +87,18 @@ public class Glooper implements IHero {
     private Sprite sprite;
     private Animation animation;
 
+    private OrthographicCamera camera;
 
-    public Glooper(World world) {
+    public Glooper(World world, OrthographicCamera camera) {
         this.world = world;
+        this.camera = camera;
 
         timeAlive = 0;
         absoluteOmega = 2;
         velocity = 2;
         angularVelocity = 2;
+        currentAngularVelocity = angularVelocity;
+
 
         wiggleAmplitude = 0.3f;
         wiggleFrequency = 14;
@@ -99,6 +116,11 @@ public class Glooper implements IHero {
         body.createFixture(fdef);
         body.setAngularVelocity(angularVelocity);
 
+        rayHandler = new RayHandler(world);
+        lamp = new PointLight(rayHandler, RAYS_NUM,
+                new Color(0.8f,0.8f,0.4f,1),lightDistance,
+                0,0
+                );
 
         Texture texture = new Texture("glooper.png");
         sprite = new Sprite(texture);
@@ -118,6 +140,10 @@ public class Glooper implements IHero {
     public Sprite getSprite(){return sprite;}
 
 
+    @Override
+    public void die() {
+
+    }
 
     @Override
     public void update(float deltaTime) {
@@ -141,26 +167,51 @@ public class Glooper implements IHero {
         body.setLinearVelocity(velocity2D.add(wiggleOffset));
 
         //align sprite position according to body
-        sprite.setPosition(body.getPosition().x-(2*radius), body.getPosition().y-(radius));
-        sprite.setRotation(angle*MathUtils.radiansToDegrees);
+        float posX =body.getPosition().x-(2*radius);
+        float posY = body.getPosition().y-(radius);
+        sprite.setPosition(posX, posY);
+        sprite.setRotation(angle * MathUtils.radiansToDegrees);
+
+        lamp.setPosition(body.getPosition().x-MathUtils.cos(body.getAngle()+0.6f)*0.3f,
+                body.getPosition().y-MathUtils.sin(body.getAngle()+9.6f)*0.3f);
+        rayHandler.setCombinedMatrix(camera.combined);
+        rayHandler.updateAndRender();
 
     }
 
     @Override
     public void touchDownAction() {
+        currentAngularVelocity = -angularVelocity;
+        body.setAngularVelocity(currentAngularVelocity);
 
     }
 
     @Override
     public void touchUpAction() {
+        currentAngularVelocity = angularVelocity;
+        body.setAngularVelocity(currentAngularVelocity);
 
     }
 
     @Override
     public Vector2 getPosition() {
-        return new Vector2(sprite.getX(), sprite.getY());
+        return body.getPosition();/* new Vector2(sprite.getX(), sprite.getY()*/
     }
 
+    @Override
+    public Texture getTexture() {
+        return null;
+    }
+
+    @Override
+    public float getRotation() {
+        return body.getTransform().getRotation();
+    }
+
+    @Override
+    public void dispose() {
+        rayHandler.dispose();
+    }
 }
 
 

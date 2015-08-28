@@ -59,7 +59,7 @@ public class CameraHelper {
 */
     private void lerp(float delta){
         Vector2 pC = new Vector2(camera.position.x, camera.position.y);
-        heroPos = model.getHeroPosition();
+        heroPos = model.getHero().getPosition();
         Vector2 a = heroPos.sub(pC);
         a.scl(lerp*delta);
         camera.position.x = camera.position.x+a.x;

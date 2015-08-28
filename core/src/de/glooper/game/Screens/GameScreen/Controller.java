@@ -18,47 +18,17 @@ public class Controller extends InputAdapter{
         this.model = model;
     }
 
-    @Override
-    public boolean keyTyped(char character) {
-        if (character == Input.Keys.W)
-            model.setGlooperWobblieness(
-                    model.getGlooperWobblienessFreqency()+stepSize,
-                    model.getGlooperWobblienessAmplitude());
 
-        if (character == Input.Keys.S){
-            model.setGlooperWobblieness(
-                    model.getGlooperWobblienessFreqency()-stepSize,
-                    model.getGlooperWobblienessAmplitude()
-            );
-        }
-        if (character == Input.Keys.D){
-            model.setGlooperWobblieness(
-                    model.getGlooperWobblienessFreqency(),
-                    model.getGlooperWobblienessAmplitude()+stepSize
-            );
-        }
-        if (character == Input.Keys.A){
-            model.setGlooperWobblieness(
-                    model.getGlooperWobblienessFreqency(),
-                    model.getGlooperWobblienessAmplitude()-stepSize
-            );
-            Gdx.app.debug(TAG, "pressed left");
-        }
-
-
-
-        return true;
-    }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        model.glooperLeft();
+        model.getHero().touchDownAction();
         return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        model.glooperRight();
+        model.getHero().touchUpAction();
         return true;
     }
 }

@@ -44,7 +44,7 @@ public class WorldModel implements Disposable {
 
         world = new World(new Vector2(0,0), false);
         dynamicTileWorld = DynamicTileWorld.getInstance(world);
-        glooper = new Glooper(world);
+        glooper = new Glooper(world, camera);
 
         cameraHelper = new CameraHelper(this);
         //cameraHelper.startTweening();
@@ -57,24 +57,10 @@ public class WorldModel implements Disposable {
         cameraHelper.update(delta);
     }
 
-    public void setGlooperWobblieness(float omega, float a){
-        glooper.setWiggleAmplitude(a);
-        glooper.setAngularVelocity(omega);
-    }
-    public float getGlooperWobblienessFreqency(){
-        return glooper.getWiggleFrequency();
-    }
-    public float getGlooperWobblienessAmplitude(){
-        return glooper.getWiggleAmplitude();
-    }
 
 
-    public void glooperRight(){
-        glooper.setAngularVelocity(glooper.getAbsoluteOmega());
-    }
-    public void glooperLeft(){
-        glooper.setAngularVelocity( -(glooper.getAbsoluteOmega()) );
-    }
+
+
 
     public OrthographicCamera getCamera(){return camera;}
     public Array<Sprite> getBackgroundSpritesToDraw(){
@@ -88,13 +74,11 @@ public class WorldModel implements Disposable {
         return sprites;
     }
 
-    public Sprite getHeroSprite(){
-        return glooper.getSprite();
+    public IHero getHero(){
+        return glooper;
     }
 
-    public Vector2 getHeroPosition(){
-        return glooper.getPosition();
-    }
+
 
 
 
