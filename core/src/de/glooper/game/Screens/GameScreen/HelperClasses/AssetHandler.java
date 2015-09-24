@@ -4,9 +4,11 @@ import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.ATextureAsset;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.SimpleTiles.XCross;
+import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.Heros.Glooper;
 
 
 /**
@@ -44,6 +46,8 @@ public class AssetHandler implements Disposable, AssetErrorListener {
     public ATextureAsset firstWorldTileAsset;
     public ATextureAsset secondWolrdTileAsset;
 
+    public Glooper glooperAsset;
+
     private String directoryName;
 
     private AssetHandler(){}
@@ -65,7 +69,8 @@ public class AssetHandler implements Disposable, AssetErrorListener {
          * so only one image of 2048px * 2048px in merory
          * therefore, a x cross with four openings will be used
          */
-        assetManager.load(directoryName+"xCross.png",Texture.class);
+        assetManager.load(directoryName + "xCross.png", Texture.class);
+        assetManager.load("Heros/glooper.pack", TextureAtlas.class);
         /**
          * but now we must direct the corresponding
          * Textures handled by the assetManager
@@ -75,6 +80,9 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         Texture startTileTexture = assetManager.get(directoryName+"xCross.png", Texture.class);
         startTileTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         firstWorldTileAsset = new XCross(startTileTexture);
+
+        TextureAtlas glooperAtlas = assetManager.get("Heros/glooper.pack");
+        glooperAsset = new Glooper(glooperAtlas);
 
     }
 

@@ -2,6 +2,7 @@ package de.glooper.game.model;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.*;
@@ -30,34 +31,40 @@ public class WorldTile implements IWorldTile, Disposable{
      */
     public enum TYPE{START, ONE_MIN, THREE_MIN, FIVE_MIN}
 
-    private ITileStrategy leftStrategy;
-    private ITileStrategy rightStrategy;
-    private ITileStrategy upStrategy;
-    private ITileStrategy downStrategy;
+
 
     private float xPos, yPos;
     private float xPosOld, yPosOld;
 
+    private String name, directory;
     private Sprite backgroundSprite;
     private Body body;
     private World world;
 
+    private Array<TileBorderSensor> sensors;
+    private OrthographicCamera camera;
+
+
+
     public WorldTile(Texture texture,
                      String bodyFileName, World world,
                      float x, float y, float xOld, float yOld,
-                     String directoryName){
+                     String directoryName, OrthographicCamera camera){
+        directory = directoryName;
+        name = bodyFileName;
         backgroundSprite = new Sprite(texture);
         xPos = x;
         yPos = y;
         xPosOld = xOld;
         yPosOld = yOld;
+        this.camera = camera;
         //Sprite settings
         backgroundSprite.setPosition(xPos, yPos);
         backgroundSprite.setSize(TILE_SIZE, TILE_SIZE);
 
         //Body settings
         this.world = world;
-       BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal( "WorldTiles/"+directoryName+"/"+directoryName+".json"));
+       BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal( "WorldTiles/"+directory+"/"+directory+".json"));
 
         BodyDef bd = new BodyDef();
         bd.position.set(x, y);
@@ -70,53 +77,19 @@ public class WorldTile implements IWorldTile, Disposable{
         body = world.createBody(bd);
 
 
-        loader.attachFixture(body, /*"WorldTiles/" + directoryName + "/"+*/bodyFileName, fd,TILE_SIZE);
+        loader.attachFixture(body, name, fd,TILE_SIZE);
 
-
-
-
-
-
-
+        sensors = new Array<TileBorderSensor>();
 
     }
 
 
-    public void setLeftStrategy(ITileStrategy leftStrategy) {
-        this.leftStrategy = leftStrategy;
+
+    @Override
+    public void attachSensor(TileBorderSensor sensor){
+        sensors.add(sensor);
     }
 
-    public void setRightStrategy(ITileStrategy rightStrategy) {
-        this.rightStrategy = rightStrategy;
-    }
-
-    public void setUpStrategy(ITileStrategy upStrategy) {
-        this.upStrategy = upStrategy;
-    }
-
-    public void setDownStrategy(ITileStrategy downStrategy) {
-        this.downStrategy = downStrategy;
-    }
-
-    public void setSprite(Sprite sprite) {
-        this.backgroundSprite = sprite;
-    }
-
-    public ITileStrategy getLeftStrategy() {
-        return leftStrategy;
-    }
-
-    public ITileStrategy getRightStrategy() {
-        return rightStrategy;
-    }
-
-    public ITileStrategy getUpStrategy() {
-        return upStrategy;
-    }
-
-    public ITileStrategy getDownStrategy() {
-        return downStrategy;
-    }
 
     @Override
     public Array<Sprite> getSprites() {
@@ -125,9 +98,19 @@ public class WorldTile implements IWorldTile, Disposable{
         return sprites;
     }
 
-
+    @Override
+    public String getName() {
+        return name;
+    }
 
     @Override
     public void dispose() {
+    }
+
+    @Override
+    public void update(float delta) {
+        for( TileBorderSensor sensor: sensors){
+            sensor.update(camera.position);
+        }
     }
 }

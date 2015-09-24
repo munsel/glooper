@@ -14,6 +14,8 @@ public interface IHero {
     void touchDownAction();
     void touchUpAction();
     Vector2 getPosition();
+    Vector2 getLampPosition();
     Texture getTexture();
     float getRotation();
+
 }

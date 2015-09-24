@@ -47,12 +47,29 @@ public class Renderer implements Disposable {
 
         batch.begin();
         model.getHero().getSprite().draw(batch);
-        //batch.draw(hero.getTexture(), hero.getPosition().x,hero.getPosition().y,0,0, hero.getRotation() );
-        for (Sprite sprite : model.getBackgroundSpritesToDraw()){
+
+        /*
+        	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
+		float scaleX, float scaleY, float rotation);
+         */
+
+
+
+        //batch.draw(hero.getTexture(), hero.getPosition().x, hero.getPosition().y, 0,0, hero.getRotation() );
+
+
+
+       for (Sprite sprite : model.getBackgroundSpritesToDraw()){
+           sprite.draw(batch);
+        }
+        for (Sprite sprite : model.getHUDSpritesToDraw()){
             sprite.draw(batch);
         }
+
         batch.end();
-        debugRenderings();
+
+        model.getHud().draw();
+        //debugRenderings();
 
 
     }
@@ -64,10 +81,25 @@ public class Renderer implements Disposable {
         debugShapeRenderer.begin(ShapeRenderer.ShapeType.Point);
 
         Vector2 heroPos = model.getHero().getPosition();
+        debugShapeRenderer.setColor(0, 1, 0, 1);
         debugShapeRenderer.point(heroPos.x, heroPos.y, 0);
 
         Vector3 cameraPos = model.getCamera().position;
+        debugShapeRenderer.setColor(1,0,0,1);
         debugShapeRenderer.point(cameraPos.x, cameraPos.y, 0);
+
+        Vector2 heroSpritePos = new Vector2( model.getHero().getSprite().getX(),model.getHero().getSprite().getY());
+        debugShapeRenderer.setColor(0,0,1,1);
+        debugShapeRenderer.point(heroSpritePos.x, heroSpritePos.y, 0);
+
+        Vector2 lampPos = model.getHero().getLampPosition();
+        debugShapeRenderer.setColor(0, 1, 1, 1);
+        debugShapeRenderer.point(lampPos.x, lampPos.y, 0);
+
+        Vector2 rotationPoint =  new Vector2( model.getHero().getSprite().getOriginX(),model.getHero().getSprite().getOriginY());
+        debugShapeRenderer.setColor(1,0 , 1, 1);
+        rotationPoint.add(heroSpritePos);
+        debugShapeRenderer.point(rotationPoint.x, rotationPoint.y, 0);
 
         debugShapeRenderer.end();
     }
