@@ -2,7 +2,6 @@ package de.glooper.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import de.glooper.game.SaveStateManagement.Test;
 import de.glooper.game.Screens.GameScreen.GameScreen;
 import de.glooper.game.Screens.MenuScreen.MenuScreen;
 
@@ -20,7 +19,6 @@ public class GlooperMainClass extends Game {
 		Gdx.graphics.setDisplayMode(800, 480, false);
 		//setScreen(new GameScreen(this));
 
-		Test test	= new Test();
 		setScreen(new MenuScreen(this));
 
 

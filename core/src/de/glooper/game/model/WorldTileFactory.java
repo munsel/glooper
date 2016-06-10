@@ -5,15 +5,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
 import de.glooper.game.Screens.GameScreen.HelperClasses.AssetHandler;
 import de.glooper.game.model.TileSets.ITileSet;
 import de.glooper.game.model.TileSets.StarterTiles;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by vincent on 18.07.15.
@@ -57,7 +53,7 @@ public class WorldTileFactory {
      */
     public IWorldTile getStartTile(World world){
         WorldTile tile = new WorldTile(AssetHandler.instance.firstWorldTileAsset.getTexture(),
-                "xCross",world,0,0,0,0,tileSet.getSetName(), camera);
+                "xCross",world,0,0,0,0,tileSet.getNameOfSet(), camera);
 
         tile.attachSensor(new TileBorderSensor(0,0, WorldTile.DIRECTION.DOWN, dynamicWorld));
         tile.attachSensor(new TileBorderSensor(0,0, WorldTile.DIRECTION.UP, dynamicWorld));
@@ -104,7 +100,7 @@ public class WorldTileFactory {
 
 
         IWorldTile tile = new WorldTile(AssetHandler.instance.firstWorldTileAsset.getTexture()
-                ,pick,world, x,y,0,0,tileSet.getSetName(), camera);
+                ,pick,world, x,y,0,0,tileSet.getNameOfSet(), camera);
 
         switch (direction){
             case DOWN:

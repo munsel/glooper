@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
+import de.glooper.game.Screens.GameScreen.HelperClasses.HUD;
+import de.glooper.game.Screens.GameScreen.HelperClasses.HeroStatusDrawer;
 import de.glooper.game.Screens.GameScreen.Heros.IHero;
 
 /**
@@ -25,11 +27,17 @@ public class Renderer implements Disposable {
     private SpriteBatch batch;
     private ShapeRenderer debugShapeRenderer;
 
+    private HUD hud;
+    private HeroStatusDrawer statusDrawer;
+
     private IHero hero;
 
-    public Renderer(WorldModel model){
+    public Renderer(WorldModel model ){
         this.model = model;
         this.hero = model.getHero();
+
+        this.hud = model.getHud();
+        this.statusDrawer = model.getStatusDrawer();
 
         camera = model.getCamera();
         batch = new SpriteBatch();
@@ -46,32 +54,20 @@ public class Renderer implements Disposable {
 
 
         batch.begin();
-        model.getHero().getSprite().draw(batch);
+        hero.getSprite().draw(batch);
+        model.drawBackground(batch);
 
         /*
         	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
 		float scaleX, float scaleY, float rotation);
          */
 
-
-
         //batch.draw(hero.getTexture(), hero.getPosition().x, hero.getPosition().y, 0,0, hero.getRotation() );
 
-
-
-       for (Sprite sprite : model.getBackgroundSpritesToDraw()){
-           sprite.draw(batch);
-        }
-        for (Sprite sprite : model.getHUDSpritesToDraw()){
-            sprite.draw(batch);
-        }
-
+        statusDrawer.draw(batch);
         batch.end();
-
-        model.getHud().draw();
-        //debugRenderings();
-
-
+        hud.draw();
+        debugRenderings();
     }
 
 
@@ -100,6 +96,12 @@ public class Renderer implements Disposable {
         debugShapeRenderer.setColor(1,0 , 1, 1);
         rotationPoint.add(heroSpritePos);
         debugShapeRenderer.point(rotationPoint.x, rotationPoint.y, 0);
+
+        debugShapeRenderer.end();
+
+        debugShapeRenderer.setColor(0,0,1,1);
+        debugShapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        model.debugDrawSensors(debugShapeRenderer);
 
         debugShapeRenderer.end();
     }

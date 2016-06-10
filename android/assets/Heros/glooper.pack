@@ -1,0 +1,26 @@
+
+glooper.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: y
+glooper_open
+  rotate: false
+  xy: 1, 1
+  size: 128, 78
+  orig: 128, 78
+  offset: 0, 0
+  index: -1
+glooper_closed
+  rotate: false
+  xy: 131, 1
+  size: 128, 78
+  orig: 128, 78
+  offset: 0, 0
+  index: -1
+glooper_between
+  rotate: false
+  xy: 261, 1
+  size: 128, 78
+  orig: 128, 78
+  offset: 0, 0
+  index: -1

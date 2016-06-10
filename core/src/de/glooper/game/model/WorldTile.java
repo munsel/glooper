@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -90,12 +92,17 @@ public class WorldTile implements IWorldTile, Disposable{
         sensors.add(sensor);
     }
 
+    @Override
+    public void drawDrebugSensors(ShapeRenderer shapeRenderer) {
+        for(TileBorderSensor sensor: sensors){
+            sensor.drawDrebugSensors(shapeRenderer);
+        }
+    }
+
 
     @Override
-    public Array<Sprite> getSprites() {
-        Array<Sprite> sprites = new Array<Sprite>();
-        sprites.add(backgroundSprite);
-        return sprites;
+    public void draw(SpriteBatch batch) {
+        backgroundSprite.draw(batch);
     }
 
     @Override
