@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
+import de.glooper.game.SaveStateManagement.Safeable;
 import de.glooper.game.SaveStateManagement.SaveState;
 import de.glooper.game.SaveStateManagement.SaveStateManager;
 import de.glooper.game.Screens.GameScreen.HelperClasses.CameraHelper;
@@ -14,14 +15,15 @@ import de.glooper.game.Screens.GameScreen.HelperClasses.HUD;
 import de.glooper.game.Screens.GameScreen.HelperClasses.HeroStatusDrawer;
 import de.glooper.game.Screens.GameScreen.Heros.Glooper;
 import de.glooper.game.Screens.GameScreen.Heros.Hero;
+import de.glooper.game.model.Background.Clouds;
 import de.glooper.game.model.DynamicTileWorld;
 import de.glooper.game.model.IDynamicWorld;
-import de.glooper.game.model.WorldTile;
+import de.glooper.game.model.Tile.WorldTile;
 
 /**
  * Created by munsel on 06.06.15.
  */
-public class WorldModel implements Disposable {
+public class WorldModel implements Safeable, Disposable {
     private static final String TAG = WorldModel.class.getSimpleName();
 
 
@@ -32,7 +34,8 @@ public class WorldModel implements Disposable {
 
     private World world;
     private Hero hero;
-    private IDynamicWorld dynamicTileWorld;
+    private DynamicTileWorld dynamicTileWorld;
+    private Clouds clouds;
     private OrthographicCamera camera;
     private CameraHelper cameraHelper;
 
@@ -49,41 +52,47 @@ public class WorldModel implements Disposable {
     public WorldModel(GameScreen parent){
         this.screen = parent;
         saveState = SaveStateManager.getSaveState();
+        gameOver = saveState.isGameOver();
 
         camera = new OrthographicCamera(VIEWPORT_X, VIEWPORT_Y);
 
-        init();
-
+        clouds = new Clouds(camera);
         world = new World(new Vector2(0,0), false);
-        dynamicTileWorld = DynamicTileWorld.getInstance(world, camera);
-        hero = new Glooper(world, camera);
+        hero = new Glooper(world, camera, this);
+        dynamicTileWorld = DynamicTileWorld.getInstance(world, hero,camera, saveState);
 
         statusDrawer = new HeroStatusDrawer(hero);
         hud = new HUD(this.screen);
         cameraHelper = new CameraHelper(this);
-        //camera.zoom = 3f;
+        init();
+        //camera.zoom = 5f;
         //camera.update();
     }
 
 
     public void update(float delta){
-        if (!screen.isPaused()) {
+        if (!screen.isPaused() && !gameOver) {
             hero.update(delta);
             world.step(1.f / 60.f, 5, 5);
             dynamicTileWorld.update(delta);
             cameraHelper.update(delta);
             statusDrawer.update(camera.position.x, camera.position.y);
             hud.update(delta, saveState.addToScore(1));
+            clouds.update(delta);
         }
     }
 
     public void init(){
-        camera.position.set(WorldTile.TILE_SIZE/2, WorldTile.TILE_SIZE/2,0);
-    }
-
-    public void gameOver(){
-        saveState.reset();
-        SaveStateManager.saveSaveState(saveState);
+        if (gameOver){
+            saveState.reset();
+            gameOver = false;
+        }
+        clouds.init();
+        dynamicTileWorld.init();
+        hud.restart();
+        hero.init(saveState);
+        cameraHelper.load(saveState);
+        camera.update();
     }
 
     public OrthographicCamera getCamera(){return camera;}
@@ -100,14 +109,16 @@ public class WorldModel implements Disposable {
         return gameOver;
     }
 
-    public void setGameOver(boolean gameOver) {
-        this.gameOver = gameOver;
+    public void setGameOver() {
+        this.gameOver = true;
+        saveState.setGameOver(true);
+        hud.gameOver(saveState.getScore());
     }
 
-    public Vector2 getTilePos(){
-        return dynamicTileWorld.getCurrentPos();
-    }
 
+    public SaveState getSaveState(){
+        return saveState;
+    }
     public String getTileName(){
         return dynamicTileWorld.getCurrentName();
     }
@@ -128,9 +139,24 @@ public class WorldModel implements Disposable {
 
     }
 
-
-
     public void debugDrawSensors(ShapeRenderer shapeRenderer){
         dynamicTileWorld.drawDebugSensors(shapeRenderer);
+    }
+
+    public Clouds getClouds() {
+        return clouds;
+    }
+
+    @Override
+    public void save(SaveState saveState) {
+        hero.save(saveState);
+        saveState.setGameOver(isGameOver());
+        dynamicTileWorld.save(saveState);
+        cameraHelper.save(saveState);
+    }
+
+    @Override
+    public void load(SaveState saveState) {
+        //not used here! the init() method handles this
     }
 }

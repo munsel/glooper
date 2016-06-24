@@ -54,6 +54,7 @@ public class Renderer implements Disposable {
 
 
         batch.begin();
+        model.getClouds().draw(batch);
         hero.getSprite().draw(batch);
         model.drawBackground(batch);
 

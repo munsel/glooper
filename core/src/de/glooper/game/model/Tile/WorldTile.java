@@ -1,4 +1,4 @@
-package de.glooper.game.model;
+package de.glooper.game.model.Tile;
 
 
 import com.badlogic.gdx.Gdx;
@@ -7,10 +7,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.JsonReader;
+import de.glooper.game.Screens.GameScreen.Heros.Hero;
+import de.glooper.game.model.DynamicTileWorld;
+import de.glooper.game.model.IDynamicWorld;
+import de.glooper.game.model.Tile.BorderSensor.NewTileSetter;
+import de.glooper.game.model.Tile.BorderSensor.TileBorderSensor;
 import libs.BodyEditorLoader;
 
 /**
@@ -36,12 +41,20 @@ public class WorldTile implements IWorldTile, Disposable{
 
 
     private float xPos, yPos;
+
+    private Vector2 heroPos;
+
     private float xPosOld, yPosOld;
 
     private String name, directory;
     private Sprite backgroundSprite;
     private Body body;
+
     private World world;
+    private IDynamicWorld dynamicWorld;
+    private Hero hero;
+
+    private float timeInside;
 
     private Array<TileBorderSensor> sensors;
     private OrthographicCamera camera;
@@ -49,17 +62,23 @@ public class WorldTile implements IWorldTile, Disposable{
 
 
     public WorldTile(Texture texture,
-                     String bodyFileName, World world,
+                     String bodyFileName,
+                     World world, IDynamicWorld dynamicWorld,
+                     Hero hero,
                      float x, float y, float xOld, float yOld,
-                     String directoryName, OrthographicCamera camera){
+                     String directoryName, OrthographicCamera camera)
+    {
         directory = directoryName;
         name = bodyFileName;
         backgroundSprite = new Sprite(texture);
+        timeInside = 0;
         xPos = x;
         yPos = y;
         xPosOld = xOld;
         yPosOld = yOld;
         this.camera = camera;
+        this.dynamicWorld = dynamicWorld;
+        this.hero = hero;
         //Sprite settings
         backgroundSprite.setPosition(xPos, yPos);
         backgroundSprite.setSize(TILE_SIZE, TILE_SIZE);
@@ -92,11 +111,29 @@ public class WorldTile implements IWorldTile, Disposable{
         sensors.add(sensor);
     }
 
+
+
+    @Override
+    public boolean isHeroInside() {
+        heroPos = hero.getPosition();
+        if (heroPos.x>xPos && heroPos.x<xPos+WorldTile.TILE_SIZE){
+            if (heroPos.y>yPos && heroPos.y<yPos+WorldTile.TILE_SIZE){
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void drawDrebugSensors(ShapeRenderer shapeRenderer) {
         for(TileBorderSensor sensor: sensors){
-            sensor.drawDrebugSensors(shapeRenderer);
+            sensor.drawDebugSensors(shapeRenderer);
         }
+    }
+
+    @Override
+    public void removeBody() {
+        world.destroyBody(body);
     }
 
 
@@ -111,13 +148,49 @@ public class WorldTile implements IWorldTile, Disposable{
     }
 
     @Override
+    public String getNameOfSet() {
+        return directory;
+    }
+
+    @Override
+    public float getX() {
+        return backgroundSprite.getX();
+    }
+
+    @Override
+    public float getY() {
+        return backgroundSprite.getY();
+    }
+
+    @Override
     public void dispose() {
     }
 
     @Override
     public void update(float delta) {
-        for( TileBorderSensor sensor: sensors){
-            sensor.update(camera.position);
+        if (isHeroInside()) {
+            //Gdx.app.log(TAG, "is inside: x:"+Float.toString(xPos)+" y:"+ Float.toString(yPos));
+            timeInside += delta;
+            if (dynamicWorld.getCurrentTile() != this) {
+                //Gdx.app.log(TAG, "this tile is not current one!");
+                if (timeInside > 3) {
+                    //Gdx.app.log(TAG, "now set this to current!");
+                    dynamicWorld.setCurrentTile(this);
+                    sensors.clear();
+                    sensors.add(new TileBorderSensor(xPos,yPos,DIRECTION.DOWN, this, hero, new NewTileSetter(dynamicWorld)));
+                    sensors.add(new TileBorderSensor(xPos,yPos,DIRECTION.UP, this, hero, new NewTileSetter(dynamicWorld)));
+                    sensors.add(new TileBorderSensor(xPos,yPos,DIRECTION.LEFT, this, hero, new NewTileSetter(dynamicWorld)));
+                    sensors.add(new TileBorderSensor(xPos,yPos,DIRECTION.RIGHT, this, hero, new NewTileSetter(dynamicWorld)));
+                }
+            }
+            if (dynamicWorld.getCurrentTile() == this) {
+                for (TileBorderSensor sensor : sensors) {
+                    sensor.update(camera.position);
+                }
+            }
+        }else{
+            timeInside = 0;
         }
+
     }
 }

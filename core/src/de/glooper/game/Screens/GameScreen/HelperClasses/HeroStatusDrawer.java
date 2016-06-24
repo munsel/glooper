@@ -72,13 +72,11 @@ public class HeroStatusDrawer implements Disposable {
                 camPosY-WorldModel.VIEWPORT_Y/2+0.2f);
         drawerForeground.setPosition(camPosX+ WorldModel.VIEWPORT_X/2 -SIZE_X-0.2f,
                 camPosY-WorldModel.VIEWPORT_Y/2+0.2f);
-
-
     }
 
     public void draw(SpriteBatch batch){
-        //drawerBackground.draw(batch);
-        //drawerForeground.draw(batch);
+        drawerBackground.draw(batch);
+        drawerForeground.draw(batch);
     }
 
     @Override

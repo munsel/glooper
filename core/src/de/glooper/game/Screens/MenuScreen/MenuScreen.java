@@ -21,13 +21,14 @@ public class MenuScreen implements Screen {
     private SpriteBatch batch;
 
     private GlooperMainClass game;
+    private InputProcessor processor;
 
     public MenuScreen(final GlooperMainClass game){
         this.game = game;
         glooperEyes = new GlooperEyes();
         batch = new SpriteBatch();
 
-        InputProcessor processor = new InputAdapter() {
+        processor = new InputAdapter() {
 
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
@@ -36,11 +37,11 @@ public class MenuScreen implements Screen {
             }
         };
 
-        Gdx.input.setInputProcessor(processor);
+
     }
 
     public void show() {
-
+        Gdx.input.setInputProcessor(processor);
     }
 
     @Override

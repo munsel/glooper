@@ -1,14 +1,23 @@
 package de.glooper.game.Screens.GameScreen.HelperClasses;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.ATextureAsset;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.SimpleTiles.XCross;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.Heros.Glooper;
+
+import java.util.stream.Stream;
 
 
 /**
@@ -25,6 +34,8 @@ public class AssetHandler implements Disposable, AssetErrorListener {
      * all the stuff that drains the memory!
      */
     private static final String TAG = AssetHandler.class.getSimpleName();
+
+    public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 
     public static  AssetHandler instance = new AssetHandler();
 
@@ -45,6 +56,9 @@ public class AssetHandler implements Disposable, AssetErrorListener {
 
     public ATextureAsset firstWorldTileAsset;
     public ATextureAsset secondWolrdTileAsset;
+    public TextureRegion[] clouds;
+
+    public Skin skin;
 
     public Glooper glooperAsset;
 
@@ -71,6 +85,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
          */
         assetManager.load(directoryName + "xCross.png", Texture.class);
         assetManager.load("Heros/glooper.pack", TextureAtlas.class);
+        assetManager.load("Backgrounds/clouds.atlas", TextureAtlas.class);
         /**
          * but now we must direct the corresponding
          * Textures handled by the assetManager
@@ -84,11 +99,18 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         TextureAtlas glooperAtlas = assetManager.get("Heros/glooper.pack");
         glooperAsset = new Glooper(glooperAtlas);
 
+        TextureAtlas cloudsAtlas = assetManager.get("Backgrounds/clouds.atlas");
+        clouds = new TextureRegion[6];
+        for (int i = 0; i<6; i++){
+            clouds[i] = cloudsAtlas.findRegion("cloud"+Integer.toString(i+1));
+        }
+
+        skin = initSkin();
     }
 
     public void loadNewTile(String tileDescriptor ){
         assetManager.load(tileDescriptor, Texture.class);
-        assetManager.finishLoading();
+        //assetManager.finishLoading();
 
     }
 
@@ -97,10 +119,39 @@ public class AssetHandler implements Disposable, AssetErrorListener {
 
     }
 
+    private Skin initSkin(){
+        Skin skin = new Skin();
+        skin.addRegions(new TextureAtlas(Gdx.files.internal("uiskin.atlas")));
+        int[] fontsizes = {24, 36};
+        BitmapFont[] fonts = getFonts("Roboto-Regular.ttf", fontsizes);
+        skin.add("fontawesome-24", fonts[0]);
+        skin.add("fontawesome-36", fonts[1]);
+        skin.load(Gdx.files.internal("uiskin.json"));
+        return skin;
+    }
+
 
 
     public void error(AssetDescriptor asset, Throwable throwable) {
 
+    }
+
+    /**
+     * to generate some BitmapFonts on the fly
+     */
+    private BitmapFont[] getFonts(String filename, int[] sizes) {
+        FileHandle handle = Gdx.files.internal(filename);
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(handle);
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+                new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.characters = FONT_CHARACTERS;
+        BitmapFont[] fonts = new BitmapFont[2];
+        for ( int i = 0 ; i < sizes.length ; i++){
+            parameter.size = sizes[i];
+            fonts[i]=generator.generateFont(parameter);
+        }
+        generator.dispose();
+        return fonts;
     }
 
     @Override

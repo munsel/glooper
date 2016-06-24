@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.uwsoft.editor.renderer.resources.ResourceManager;
 import de.glooper.game.GlooperMainClass;
+import de.glooper.game.SaveStateManagement.SaveStateManager;
 import de.glooper.game.Screens.GameScreen.HelperClasses.AssetHandler;
 import de.glooper.game.Screens.GameScreen.HelperClasses.HUD;
 import de.glooper.game.Screens.GameScreen.HelperClasses.HeroStatusDrawer;
@@ -33,9 +34,11 @@ public class GameScreen implements Screen {
 
     private InputMultiplexer multiplexer;
 
+    private GlooperMainClass mainClass;
+
 
     public GameScreen(GlooperMainClass mainClass){
-        super();
+        this.mainClass = mainClass;
         model = new WorldModel(this);
         controller = new Controller(model);
         renderer = new Renderer(model);
@@ -43,13 +46,17 @@ public class GameScreen implements Screen {
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(model.getHud());
         multiplexer.addProcessor(controller);
-        Gdx.input.setInputProcessor(multiplexer);
+
     }
 
     public void show() {
-
+            model.init();
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
+    public void backToMenu(){
+        mainClass.backToMenu();
+    }
 
 
     @Override
@@ -71,6 +78,8 @@ public class GameScreen implements Screen {
     public void pause() {
         Gdx.app.log(TAG, "paused");
         paused = true;
+        model.save(model.getSaveState());
+        SaveStateManager.saveSaveState(model.getSaveState());
         multiplexer.removeProcessor(controller);
     }
 

@@ -1,31 +1,31 @@
 package de.glooper.game.Screens.GameScreen.HelperClasses;
 
-import aurelienribon.tweenengine.*;
-import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import de.glooper.game.SaveStateManagement.Entities.EntitySaveState;
+import de.glooper.game.SaveStateManagement.Safeable;
+import de.glooper.game.SaveStateManagement.SaveState;
 import de.glooper.game.Screens.GameScreen.WorldModel;
-import de.glooper.game.tween.CameraAccessor;
+import de.glooper.game.model.Tile.WorldTile;
+
 
 /**
  * Created by munsel on 14.08.15.
  */
-public class CameraHelper {
+public class CameraHelper implements Safeable{
     private static final String TAG = CameraHelper.class.getSimpleName();
-    public boolean isTweening = true;
 
     private WorldModel model;
     private  OrthographicCamera camera;
-    private TweenManager tweenManager;
+
     private Vector2 heroPos;
 
     /**
      * Lerp model for smooth camera movements
      *
      */
-    private float lerp = 1f;
-
-
+    private float lerp = 3f;
 
     public CameraHelper(WorldModel model){
         this.model = model;
@@ -74,4 +74,24 @@ public class CameraHelper {
 
     }
 
+    @Override
+    public void save(SaveState saveState) {
+        EntitySaveState entitySaveState = new EntitySaveState();
+        entitySaveState.x = camera.position.x;
+        entitySaveState.y = camera.position.y;
+        saveState.setCameraData(entitySaveState);
+    }
+
+    @Override
+    public void load(SaveState saveState) {
+        EntitySaveState cameraData = saveState.getCameraData();
+        if (cameraData != null){
+            camera.position.x = cameraData.x;
+            camera.position.y = cameraData.y;
+        }else{
+            camera.position.x = WorldTile.TILE_SIZE/2;
+            camera.position.y = WorldTile.TILE_SIZE/2;
+        }
+        camera.update();
+    }
 }

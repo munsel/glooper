@@ -1,28 +1,30 @@
 package de.glooper.game.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
-import de.glooper.game.model.IDynamicWorld;
+import de.glooper.game.SaveStateManagement.Entities.TileSaveState;
+import de.glooper.game.SaveStateManagement.Safeable;
+import de.glooper.game.SaveStateManagement.SaveState;
+import de.glooper.game.Screens.GameScreen.Heros.Hero;
+import de.glooper.game.model.Tile.IWorldTile;
+import de.glooper.game.model.Tile.WorldTile;
+
+import java.util.ArrayList;
 
 /**
  * Created by munsel on 12.08.15.
  */
-public class DynamicTileWorld implements IDynamicWorld {
+public class DynamicTileWorld implements IDynamicWorld, Safeable {
     private static final String TAG = DynamicTileWorld.class.getSimpleName();
-
-
 
     private Array<IWorldTile> tiles;
     private IWorldTile currentTile;
-
-
-    private Array<Sprite> sprites;
 
     public static DynamicTileWorld instance;
 
@@ -30,22 +32,26 @@ public class DynamicTileWorld implements IDynamicWorld {
 
     private WorldTileFactory facory;
     private World world;
+    private Hero hero;
     private OrthographicCamera camera;
+    private SaveState saveState;
 
-    private DynamicTileWorld(World world, OrthographicCamera camera){
+    private DynamicTileWorld(World world, Hero hero, OrthographicCamera camera, SaveState saveState){
         this.world = world;
         this.camera = camera;
+        this.hero = hero;
+        this.saveState = saveState;
         currentPos = new Vector2();
         tiles = new Array<IWorldTile>();
-        init();
+        facory = WorldTileFactory.getInstance(camera, hero,this, world);
     }
 
     @Override
     public void init() {
         currentPos.setZero();
-        facory = WorldTileFactory.getInstance(camera, this, world);
-        tiles.add( facory.getStartTile(world) );
-        currentTile = tiles.get(0);
+        tiles.clear();
+        load(saveState);
+        //currentTile = tiles.get(0);
     }
 
     @Override
@@ -53,36 +59,40 @@ public class DynamicTileWorld implements IDynamicWorld {
         currentPos.x = x;
         currentPos.y = y;
 
-        int currentIndex = tiles.indexOf(currentTile, false);
+        int currentIndex = tiles.indexOf(currentTile, true);
         for(int i = 0; i < tiles.size; i++){
             if (i == currentIndex)continue;
+            tiles.get(i).removeBody();
             tiles.removeIndex(i);
         }
-        /*
+/*
         if (tiles.size>=2){
             for (IWorldTile tile: tiles){
                 if (!tile.equals(currentTile)){
-                    tiles.removeValue(tile, false);
+                    tiles.removeValue(tile, true);
+                    tile.removeBody();
                 }
             }
         }*/
-        tiles.add(facory.getWorldTile(x, y, direction));
+        tiles.add(facory.getWorldTile(x, y, direction, currentTile));
     }
 
     @Override
     public void setCurrentTile(IWorldTile newCurrentTile) {
-        newCurrentTile = newCurrentTile;
+        currentTile = newCurrentTile;
     }
 
+    @Override
+    public IWorldTile getCurrentTile() {
+        return currentTile;
+    }
 
-    public static IDynamicWorld getInstance(World world, OrthographicCamera camera) {
+    public static DynamicTileWorld getInstance(World world, Hero hero,OrthographicCamera camera, SaveState state) {
         if (instance == null)
-            instance = new DynamicTileWorld(world, camera);
+            instance = new DynamicTileWorld(world,hero, camera, state);
 
         return instance;
     }
-
-
 
     @Override
     public void draw(SpriteBatch batch) {
@@ -93,18 +103,14 @@ public class DynamicTileWorld implements IDynamicWorld {
     }
 
     @Override
-    public Vector2 getCurrentPos(){
-        return currentPos;
-    }
-
-    @Override
     public String getCurrentName() {
         return currentTile.getName();
     }
 
     @Override
     public void update(float delta) {
-        currentTile.update(delta);
+        for (IWorldTile tile: tiles)
+        tile.update(delta);
     }
 
     @Override
@@ -113,5 +119,35 @@ public class DynamicTileWorld implements IDynamicWorld {
             tile.drawDrebugSensors(shapeRenderer);
         }
 
+    }
+
+    @Override
+    public void save(SaveState saveState) {
+        Array<TileSaveState> savedTiles = new Array<TileSaveState>();
+        for (IWorldTile tile : tiles) {
+            TileSaveState tileSaveState = new TileSaveState();
+            tileSaveState.nameOfSet = tile.getNameOfSet();
+            tileSaveState.tile.TAG = tile.getName();
+            tileSaveState.tile.x = tile.getX();
+            tileSaveState.tile.y = tile.getY();
+            savedTiles.add(tileSaveState);
+        }
+        saveState.setTiles(savedTiles);
+    }
+
+    @Override
+    public void load(SaveState saveState) {
+        if(saveState.getTiles()!=null) {
+            Array<TileSaveState> savedTiles = saveState.getTiles();
+            tiles.clear();
+            for (TileSaveState tileSaveState : savedTiles){
+                IWorldTile tile = facory.createFromSaveState(tileSaveState);
+                tiles.add(tile);
+            }
+        }
+        else {
+            tiles.add( facory.getStartTile(world) );
+            Gdx.app.log(TAG, "could not load tileset!");
+        }
     }
 }

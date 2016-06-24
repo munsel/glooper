@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
+import de.glooper.game.Screens.GameScreen.WorldModel;
 
 
 /**
@@ -20,8 +21,9 @@ public class Glooper extends Hero {
 
     public static final String HeroName = "glooper";
 
-    public Glooper(World world, OrthographicCamera camera) {
-        super(world, camera, HeroName);
+    public Glooper(World world, OrthographicCamera camera, WorldModel model) {
+
+        super(world, camera, HeroName, model);
     }
 }
 
