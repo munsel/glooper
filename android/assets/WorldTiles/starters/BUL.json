@@ -1,0 +1,7 @@
+{
+  nameOfSet: starters
+  tile: {
+    TAG: BUL
+  }
+  entities: [{TAG: seaweed, x:6, y:7}]
+}

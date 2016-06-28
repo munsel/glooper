@@ -5,14 +5,21 @@ package de.glooper.game.model.TileSets;
  */
 public class StarterTiles implements ITileSet {
 
+
+
+
     private final String setName = "starters";
 
-    private final String startTile = "xCross";
+    private final String startTile = "LRBU";
 
-    private final String[] leftOpenings = {"xCross"};
-    private final String[] rightOpenings = {"xCross"};
-    private final String[] topOpenings = {"xCross"};
-    private final String[] bottomOpenings = {"xCross"};
+    private final String[] allTileTextureNames = {"BL", "BUL",
+            "LR", "LRBU", "LU", "BU","B"};
+
+    private final String[] leftOpenings = {"BL", "BUL",
+                                "LR", "LRBU", "LU"};
+    private final String[] rightOpenings = {"LR", "LRBU"};
+    private final String[] topOpenings = {"BU","BUL","LRBU","LU"};
+    private final String[] bottomOpenings = {"LRBU", "BU", "BUL","B"};
 
 
     @Override
@@ -23,6 +30,11 @@ public class StarterTiles implements ITileSet {
     @Override
     public String getStartTile() {
         return startTile;
+    }
+
+    @Override
+    public String[] getAllTextureFileNames() {
+        return allTileTextureNames;
     }
 
     @Override

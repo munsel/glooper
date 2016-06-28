@@ -5,9 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import de.glooper.game.Screens.GameScreen.Heros.Hero;
+import de.glooper.game.model.Heros.Hero;
 import de.glooper.game.Screens.GameScreen.WorldModel;
 
 /**

@@ -1,4 +1,4 @@
-package de.glooper.game.Screens.GameScreen.Heros;
+package de.glooper.game.model.Heros;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;

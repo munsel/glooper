@@ -52,11 +52,10 @@ public class Clouds implements IBackground {
         for (int nCloud = 0; nCloud < nClouds; nCloud++) {
             Sprite sprite = new Sprite(cloudsRegions[MathUtils.random(5)]);
             sprite.setSize(1, 1.5f);
-            Color cloudTint = new Color(
-                    MathUtils.random()*.2f,
-                    MathUtils.random()*.2f,
-                    MathUtils.random()*.3f, 1
-            );
+            float red = MathUtils.random()*.1f;
+            float green = red + MathUtils.random()*.01f;
+            float blue = red + MathUtils.random()*.01f;
+            Color cloudTint = new Color(red,green,blue, 1);
             sprite.setColor(cloudTint);
             //sprite.setColor(0x223344FF);
             clouds.add(sprite);

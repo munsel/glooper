@@ -9,10 +9,11 @@ public class TileSaveState {
 
     public String nameOfSet;
     public EntitySaveState tile;
-    public Array<EntitySaveState> obstacles;
+    public Array<EntitySaveState> entities;
+
     public TileSaveState(){
         tile = new EntitySaveState();
-        obstacles = new Array<EntitySaveState>();
+        entities = new Array<EntitySaveState>();
     }
 
 }

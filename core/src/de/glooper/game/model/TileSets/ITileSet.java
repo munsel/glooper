@@ -6,6 +6,7 @@ package de.glooper.game.model.TileSets;
 public interface ITileSet {
     String getNameOfSet();
     String getStartTile();
+    String[] getAllTextureFileNames();
     String[] getLeftOpenings();
     String[] getRightOpenings();
     String[] getTopOpenings();

@@ -1,8 +1,7 @@
 package de.glooper.game.model.Tile.BorderSensor;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector3;
-import de.glooper.game.model.IDynamicWorld;
+import de.glooper.game.model.TileWorld.IDynamicWorld;
 import de.glooper.game.model.Tile.IWorldTile;
 import de.glooper.game.model.Tile.WorldTile;
 

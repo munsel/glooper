@@ -36,8 +36,6 @@ public class MenuScreen implements Screen {
                 return true;
             }
         };
-
-
     }
 
     public void show() {
@@ -50,11 +48,9 @@ public class MenuScreen implements Screen {
         glooperEyes.update(delta);
 
         batch.begin();
-        batch.draw(glooperEyes.getCurrentTexture(), 30, 100);
+        if (glooperEyes.getCurrentTexture() != null)
+            batch.draw(glooperEyes.getCurrentTexture(), 30, 100);
         batch.end();
-
-
-
     }
 
     @Override

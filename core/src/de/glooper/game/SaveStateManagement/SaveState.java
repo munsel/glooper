@@ -3,11 +3,8 @@ package de.glooper.game.SaveStateManagement;
 import com.badlogic.gdx.utils.Array;
 import de.glooper.game.SaveStateManagement.Entities.EntitySaveState;
 import de.glooper.game.SaveStateManagement.Entities.TileSaveState;
-import de.glooper.game.model.Tile.IWorldTile;
 import de.glooper.game.model.Tile.WorldTile;
-import de.glooper.game.model.WorldTileFactory;
-
-import java.util.ArrayList;
+import de.glooper.game.model.TileWorld.WorldTileFactory;
 
 /**
  * Created by munsel on 19.09.15.

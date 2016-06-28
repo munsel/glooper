@@ -9,6 +9,7 @@ public abstract class ATextureAsset {
 
           private Texture texture;
 
+
           public ATextureAsset( Texture texture){
                this.texture = texture;
           }
@@ -18,6 +19,7 @@ public abstract class ATextureAsset {
           public Texture getTexture() {
                return texture;
           }
+
 
 
 

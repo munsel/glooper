@@ -1,4 +1,4 @@
-package de.glooper.game.Screens.GameScreen.Heros;
+package de.glooper.game.model.Heros;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
@@ -11,15 +11,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.physics.box2d.Box2DUtils;
-import com.badlogic.gdx.physics.box2d.utils.Box2DBuild;
 import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.SaveStateManagement.Safeable;
 import de.glooper.game.SaveStateManagement.SaveState;
-import de.glooper.game.Screens.GameScreen.HelperClasses.HUD;
 import de.glooper.game.Screens.GameScreen.WorldModel;
 import de.glooper.game.model.Tile.WorldTile;
-import net.dermetfan.gdx.physics.box2d.*;
 
 /**
  * Created by munsel on 30.08.15.

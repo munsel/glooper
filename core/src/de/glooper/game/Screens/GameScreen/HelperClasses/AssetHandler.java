@@ -14,9 +14,13 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.ATextureAsset;
+import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.SimpleTiles.TileAsset;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.SimpleTiles.XCross;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.Heros.Glooper;
+import de.glooper.game.model.TileSets.ITileSet;
+import de.glooper.game.model.TileSets.StarterTiles;
 
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 
@@ -47,16 +51,18 @@ public class AssetHandler implements Disposable, AssetErrorListener {
      */
 
     public static final String simpleTilesDirectoryName = "WorldTiles/starters/";
-    public static final String[] names={"leftTurn", "rightTurn",
-            "tCross", "xCross", "straight"};
-
-
 
     private AssetManager assetManager;
 
     public ATextureAsset firstWorldTileAsset;
     public ATextureAsset secondWolrdTileAsset;
+
+    public HashMap<String, ATextureAsset> tileAssets;
     public TextureRegion[] clouds;
+
+    public TextureAtlas seaweed;
+
+    public ITileSet starterTiles;
 
     public Skin skin;
 
@@ -84,8 +90,17 @@ public class AssetHandler implements Disposable, AssetErrorListener {
          * therefore, a x cross with four openings will be used
          */
         assetManager.load(directoryName + "xCross.png", Texture.class);
+
+        starterTiles = new StarterTiles();
+        String[] starterTileSetNames = starterTiles.getAllTextureFileNames();
+        for (int i = 0; i<starterTileSetNames.length; i++ ){
+            assetManager.load(directoryName+ starterTileSetNames[i]+".png", Texture.class);
+        }
+
+
         assetManager.load("Heros/glooper.pack", TextureAtlas.class);
         assetManager.load("Backgrounds/clouds.atlas", TextureAtlas.class);
+        assetManager.load("Entities/seaweed.pack", TextureAtlas.class);
         /**
          * but now we must direct the corresponding
          * Textures handled by the assetManager
@@ -96,6 +111,14 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         startTileTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         firstWorldTileAsset = new XCross(startTileTexture);
 
+        tileAssets = new HashMap<String, ATextureAsset>();
+
+        for (int i = 0; i<starterTileSetNames.length; i++ ){
+            Texture tileTexture = assetManager.get(directoryName+starterTileSetNames[i]+".png", Texture.class);
+            tileAssets.put(starterTileSetNames[i], new TileAsset(tileTexture));
+        }
+
+
         TextureAtlas glooperAtlas = assetManager.get("Heros/glooper.pack");
         glooperAsset = new Glooper(glooperAtlas);
 
@@ -104,6 +127,8 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         for (int i = 0; i<6; i++){
             clouds[i] = cloudsAtlas.findRegion("cloud"+Integer.toString(i+1));
         }
+
+        seaweed = assetManager.get("Entities/seaweed.pack");
 
         skin = initSkin();
     }

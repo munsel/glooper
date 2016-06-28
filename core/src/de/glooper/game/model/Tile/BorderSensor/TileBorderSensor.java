@@ -2,9 +2,8 @@ package de.glooper.game.model.Tile.BorderSensor;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
-import de.glooper.game.Screens.GameScreen.Heros.Hero;
+import de.glooper.game.model.Heros.Hero;
 import de.glooper.game.Screens.GameScreen.WorldModel;
-import de.glooper.game.model.IDynamicWorld;
 import de.glooper.game.model.Tile.IWorldTile;
 import de.glooper.game.model.Tile.WorldTile;
 

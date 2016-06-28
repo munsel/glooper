@@ -2,6 +2,7 @@ package de.glooper.game.model.Tile;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -9,13 +10,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Disposable;
-import de.glooper.game.Screens.GameScreen.Heros.Hero;
-import de.glooper.game.model.DynamicTileWorld;
-import de.glooper.game.model.IDynamicWorld;
+import com.badlogic.gdx.utils.*;
+import de.glooper.game.SaveStateManagement.Entities.EntitySaveState;
+import de.glooper.game.SaveStateManagement.Entities.TileSaveState;
+import de.glooper.game.SaveStateManagement.SaveState;
+import de.glooper.game.model.Entities.Entity;
+import de.glooper.game.model.Entities.EntityFactory;
+import de.glooper.game.model.Entities.IEntity;
+import de.glooper.game.model.Heros.Hero;
+import de.glooper.game.model.TileWorld.IDynamicWorld;
 import de.glooper.game.model.Tile.BorderSensor.NewTileSetter;
 import de.glooper.game.model.Tile.BorderSensor.TileBorderSensor;
+import de.glooper.game.model.TileWorld.WorldTileFactory;
 import libs.BodyEditorLoader;
 
 /**
@@ -59,6 +65,8 @@ public class WorldTile implements IWorldTile, Disposable{
     private Array<TileBorderSensor> sensors;
     private OrthographicCamera camera;
 
+    private Array<IEntity> entities;
+
 
 
     public WorldTile(Texture texture,
@@ -101,6 +109,7 @@ public class WorldTile implements IWorldTile, Disposable{
         loader.attachFixture(body, name, fd,TILE_SIZE);
 
         sensors = new Array<TileBorderSensor>();
+        entities = new Array<IEntity>();
 
     }
 
@@ -125,7 +134,12 @@ public class WorldTile implements IWorldTile, Disposable{
     }
 
     @Override
-    public void drawDrebugSensors(ShapeRenderer shapeRenderer) {
+    public Array<IEntity> getEntities() {
+        return entities;
+    }
+
+    @Override
+    public void drawDebugSensors(ShapeRenderer shapeRenderer) {
         for(TileBorderSensor sensor: sensors){
             sensor.drawDebugSensors(shapeRenderer);
         }
@@ -140,6 +154,9 @@ public class WorldTile implements IWorldTile, Disposable{
     @Override
     public void draw(SpriteBatch batch) {
         backgroundSprite.draw(batch);
+        for (IEntity entity: entities){
+            entity.render(batch);
+        }
     }
 
     @Override
@@ -163,7 +180,13 @@ public class WorldTile implements IWorldTile, Disposable{
     }
 
     @Override
+    public void init(SaveState saveState) {
+
+    }
+
+    @Override
     public void dispose() {
+        world.destroyBody(body);
     }
 
     @Override
@@ -188,9 +211,31 @@ public class WorldTile implements IWorldTile, Disposable{
                     sensor.update(camera.position);
                 }
             }
+            for (IEntity entity: entities){
+                entity.update(delta);
+            }
         }else{
             timeInside = 0;
         }
 
     }
+
+
+ public TileSaveState getInitialState(){
+     return WorldTileFactory.getInitialState(directory+"/"+name);
+ }
+
+    public void setEntityState(TileSaveState saveState){
+        entities.clear();
+        if (saveState.entities.size >0) {
+            for (EntitySaveState entity : saveState.entities) {
+                Gdx.app.log(TAG, entity.TAG);
+                Gdx.app.log(TAG, Float.toString(entity.x));
+                Gdx.app.log(TAG, Float.toString(entity.y));
+                entities.add(EntityFactory.getEntity(this, world, entity));
+            }
+        }
+    }
+
+
 }

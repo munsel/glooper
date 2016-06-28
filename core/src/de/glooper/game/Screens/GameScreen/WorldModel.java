@@ -13,12 +13,10 @@ import de.glooper.game.SaveStateManagement.SaveStateManager;
 import de.glooper.game.Screens.GameScreen.HelperClasses.CameraHelper;
 import de.glooper.game.Screens.GameScreen.HelperClasses.HUD;
 import de.glooper.game.Screens.GameScreen.HelperClasses.HeroStatusDrawer;
-import de.glooper.game.Screens.GameScreen.Heros.Glooper;
-import de.glooper.game.Screens.GameScreen.Heros.Hero;
+import de.glooper.game.model.Heros.Glooper;
+import de.glooper.game.model.Heros.Hero;
 import de.glooper.game.model.Background.Clouds;
-import de.glooper.game.model.DynamicTileWorld;
-import de.glooper.game.model.IDynamicWorld;
-import de.glooper.game.model.Tile.WorldTile;
+import de.glooper.game.model.TileWorld.DynamicTileWorld;
 
 /**
  * Created by munsel on 06.06.15.
@@ -65,7 +63,7 @@ public class WorldModel implements Safeable, Disposable {
         hud = new HUD(this.screen);
         cameraHelper = new CameraHelper(this);
         init();
-        //camera.zoom = 5f;
+        //camera.zoom = 15f;
         //camera.update();
     }
 

@@ -1,21 +1,21 @@
-package de.glooper.game.model;
+package de.glooper.game.model.TileWorld;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import de.glooper.game.SaveStateManagement.Entities.EntitySaveState;
 import de.glooper.game.SaveStateManagement.Entities.TileSaveState;
 import de.glooper.game.SaveStateManagement.Safeable;
 import de.glooper.game.SaveStateManagement.SaveState;
-import de.glooper.game.Screens.GameScreen.Heros.Hero;
+import de.glooper.game.model.Entities.Entity;
+import de.glooper.game.model.Entities.IEntity;
+import de.glooper.game.model.Heros.Hero;
 import de.glooper.game.model.Tile.IWorldTile;
 import de.glooper.game.model.Tile.WorldTile;
-
-import java.util.ArrayList;
 
 /**
  * Created by munsel on 12.08.15.
@@ -23,8 +23,8 @@ import java.util.ArrayList;
 public class DynamicTileWorld implements IDynamicWorld, Safeable {
     private static final String TAG = DynamicTileWorld.class.getSimpleName();
 
-    private Array<IWorldTile> tiles;
-    private IWorldTile currentTile;
+    private Array<WorldTile> tiles;
+    private WorldTile currentTile;
 
     public static DynamicTileWorld instance;
 
@@ -42,13 +42,16 @@ public class DynamicTileWorld implements IDynamicWorld, Safeable {
         this.hero = hero;
         this.saveState = saveState;
         currentPos = new Vector2();
-        tiles = new Array<IWorldTile>();
+        tiles = new Array<WorldTile>();
         facory = WorldTileFactory.getInstance(camera, hero,this, world);
     }
 
     @Override
     public void init() {
         currentPos.setZero();
+        for ( WorldTile tile : tiles){
+            tile.dispose();
+        }
         tiles.clear();
         load(saveState);
         //currentTile = tiles.get(0);
@@ -65,21 +68,12 @@ public class DynamicTileWorld implements IDynamicWorld, Safeable {
             tiles.get(i).removeBody();
             tiles.removeIndex(i);
         }
-/*
-        if (tiles.size>=2){
-            for (IWorldTile tile: tiles){
-                if (!tile.equals(currentTile)){
-                    tiles.removeValue(tile, true);
-                    tile.removeBody();
-                }
-            }
-        }*/
         tiles.add(facory.getWorldTile(x, y, direction, currentTile));
     }
 
     @Override
     public void setCurrentTile(IWorldTile newCurrentTile) {
-        currentTile = newCurrentTile;
+        currentTile = (WorldTile)newCurrentTile;
     }
 
     @Override
@@ -116,7 +110,7 @@ public class DynamicTileWorld implements IDynamicWorld, Safeable {
     @Override
     public void drawDebugSensors(ShapeRenderer shapeRenderer){
         for (IWorldTile tile: tiles){
-            tile.drawDrebugSensors(shapeRenderer);
+            tile.drawDebugSensors(shapeRenderer);
         }
 
     }
@@ -130,6 +124,13 @@ public class DynamicTileWorld implements IDynamicWorld, Safeable {
             tileSaveState.tile.TAG = tile.getName();
             tileSaveState.tile.x = tile.getX();
             tileSaveState.tile.y = tile.getY();
+            for (IEntity entity: tile.getEntities()){
+                EntitySaveState entitySaveState = new EntitySaveState();
+                entitySaveState.TAG = entity.getName();
+                entitySaveState.x = entity.getX();
+                entitySaveState.y = entity.getY();
+                tileSaveState.entities.add(entitySaveState);
+            }
             savedTiles.add(tileSaveState);
         }
         saveState.setTiles(savedTiles);
@@ -141,7 +142,7 @@ public class DynamicTileWorld implements IDynamicWorld, Safeable {
             Array<TileSaveState> savedTiles = saveState.getTiles();
             tiles.clear();
             for (TileSaveState tileSaveState : savedTiles){
-                IWorldTile tile = facory.createFromSaveState(tileSaveState);
+                WorldTile tile = facory.createFromSaveState(tileSaveState);
                 tiles.add(tile);
             }
         }
