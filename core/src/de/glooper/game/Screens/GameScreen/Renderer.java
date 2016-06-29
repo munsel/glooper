@@ -1,5 +1,7 @@
 package de.glooper.game.Screens.GameScreen;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -46,7 +48,6 @@ public class Renderer implements Disposable {
     }
 
     public void render(float deltaTime){
-        //Gdx.gl.glClearColor(0,0,0,1);
         batch.setProjectionMatrix(camera.combined);
 
 

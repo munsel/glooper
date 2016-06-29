@@ -129,7 +129,7 @@ public class WorldTileFactory {
         TileSaveState initialState;
         Json json = new Json();
         try {
-            FileHandle handle = Gdx.files.local("WorldTiles/"+fileName+".json");
+            FileHandle handle = Gdx.files.internal("WorldTiles/"+fileName+".json");
             String fileContent = handle.readString();
             //System.out.println(json.prettyPrint(fileContent));
             initialState = json.fromJson(TileSaveState.class, fileContent);
@@ -137,8 +137,11 @@ public class WorldTileFactory {
             Gdx.app.error(TAG, "could not read the JSON file!");
             initialState = new TileSaveState();
         } catch (GdxRuntimeException e){
-            Gdx.app.error(TAG, "file not found YO!");
+            Gdx.app.error(TAG, "file not found YO! "+fileName);
             initialState = new TileSaveState();
+            initialState.tile.TAG = "LRBU";
+            initialState.tile.x = 0;
+            initialState.tile.y = 0;
             initialState.nameOfSet = "starters";
             EntitySaveState defaultSaveState = new EntitySaveState();
             defaultSaveState.TAG = "seaweed";

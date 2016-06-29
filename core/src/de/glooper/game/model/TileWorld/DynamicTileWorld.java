@@ -127,8 +127,8 @@ public class DynamicTileWorld implements IDynamicWorld, Safeable {
             for (IEntity entity: tile.getEntities()){
                 EntitySaveState entitySaveState = new EntitySaveState();
                 entitySaveState.TAG = entity.getName();
-                entitySaveState.x = entity.getX();
-                entitySaveState.y = entity.getY();
+                entitySaveState.x = entity.getX()-tile.getX();
+                entitySaveState.y = entity.getY()-tile.getY();
                 tileSaveState.entities.add(entitySaveState);
             }
             savedTiles.add(tileSaveState);

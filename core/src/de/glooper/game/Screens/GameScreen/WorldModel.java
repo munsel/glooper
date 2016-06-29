@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import de.glooper.game.SaveStateManagement.Safeable;
@@ -62,7 +64,7 @@ public class WorldModel implements Safeable, Disposable {
         statusDrawer = new HeroStatusDrawer(hero);
         hud = new HUD(this.screen);
         cameraHelper = new CameraHelper(this);
-        init();
+        //init();
         //camera.zoom = 15f;
         //camera.update();
     }
@@ -84,6 +86,11 @@ public class WorldModel implements Safeable, Disposable {
         if (gameOver){
             saveState.reset();
             gameOver = false;
+           /* Array<Body> bodies = new Array<Body>();
+            world.getBodies(bodies);
+            for (Body body : bodies){
+                world.destroyBody(body);
+            }*/
         }
         clouds.init();
         dynamicTileWorld.init();

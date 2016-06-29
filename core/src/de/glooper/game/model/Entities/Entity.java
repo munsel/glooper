@@ -3,9 +3,9 @@ package de.glooper.game.model.Entities;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import de.glooper.game.model.Tile.IWorldTile;
+import de.glooper.game.model.Tile.WorldTile;
 
 
 /**
@@ -13,6 +13,11 @@ import de.glooper.game.model.Tile.IWorldTile;
  */
 public class Entity implements IEntity {
     private final String TAG = Entity.class.getName();
+
+    public class EntityBodyData {
+        public boolean needsToBeRemoved;
+        public EntityBodyData(){needsToBeRemoved = false;}
+    }
 
 
     private String name;
@@ -25,18 +30,52 @@ public class Entity implements IEntity {
     private World world;
     private Body body;
 
-    public Entity(World world, TextureAtlas atlas, String name, float x, float y){
+    private IWorldTile parent;
+
+    public Entity(IWorldTile parent, World world, TextureAtlas atlas, String name,
+                  float x, float y,
+                  float width, float height,
+                  short categoryBits){
+        this.parent = parent;
         this.x = x;
         this.y = y;
+        this.width = width;
+        this.height = height;
         this.name = name;
         this.world = world;
         animation = new Animation(.15f, atlas.getRegions());
         animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+
+
+        BodyDef bdef = new BodyDef();
+        bdef.position.set(x+width*.5f, y+height*.5f);
+        //bdef.type = BodyDef.BodyType.StaticBody;
+        bdef.type = BodyDef.BodyType.DynamicBody;
+
+
+        FixtureDef fdef = new FixtureDef();
+        fdef.density = 1;
+        fdef.friction = 1;
+        fdef.restitution = 0;
+        fdef.isSensor = true;
+        fdef.filter.categoryBits = categoryBits;
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(width*.5f, height*.5f);
+
+        fdef.shape = shape;
+
+        body = this.world.createBody(bdef);
+        body.createFixture(fdef);
+        //body.setUserData(this);
+        body.setUserData(new EntityBodyData());
+
+        shape.dispose();
     }
 
     @Override
     public void update(float delta) {
         stateTime+= delta;
+        if (((EntityBodyData)body.getUserData()).needsToBeRemoved) removeItself();
     }
 
     @Override
@@ -59,6 +98,17 @@ public class Entity implements IEntity {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public void removeItself() {
+        removeBody();
+        parent.removeEntity(this);
+    }
+
+    @Override
+    public void removeBody() {
+        world.destroyBody(body);
     }
 
     @Override

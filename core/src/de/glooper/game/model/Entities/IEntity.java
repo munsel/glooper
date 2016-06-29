@@ -13,5 +13,7 @@ public interface IEntity {
     void setX(float x);
     void setY(float y);
     String getName();
+    void removeItself();
+    void removeBody();
     void setBehaviour(IEntityBehaviour behaviour);
 }

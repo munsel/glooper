@@ -18,6 +18,7 @@ import de.glooper.game.model.Entities.Entity;
 import de.glooper.game.model.Entities.EntityFactory;
 import de.glooper.game.model.Entities.IEntity;
 import de.glooper.game.model.Heros.Hero;
+import de.glooper.game.model.Physics.Box2DCategoryBits;
 import de.glooper.game.model.TileWorld.IDynamicWorld;
 import de.glooper.game.model.Tile.BorderSensor.NewTileSetter;
 import de.glooper.game.model.Tile.BorderSensor.TileBorderSensor;
@@ -102,6 +103,7 @@ public class WorldTile implements IWorldTile, Disposable{
         FixtureDef fd = new FixtureDef();
         fd.friction = 0.f;
         fd.restitution = 0;
+        fd.filter.categoryBits = Box2DCategoryBits.ROCK;
 
         body = world.createBody(bd);
 
@@ -139,6 +141,11 @@ public class WorldTile implements IWorldTile, Disposable{
     }
 
     @Override
+    public void removeEntity(IEntity entity) {
+        entities.removeValue(entity, false );
+    }
+
+    @Override
     public void drawDebugSensors(ShapeRenderer shapeRenderer) {
         for(TileBorderSensor sensor: sensors){
             sensor.drawDebugSensors(shapeRenderer);
@@ -148,6 +155,9 @@ public class WorldTile implements IWorldTile, Disposable{
     @Override
     public void removeBody() {
         world.destroyBody(body);
+        for (IEntity entity : entities){
+            entity.removeBody();
+        }
     }
 
 
@@ -186,7 +196,7 @@ public class WorldTile implements IWorldTile, Disposable{
 
     @Override
     public void dispose() {
-        world.destroyBody(body);
+        removeBody();
     }
 
     @Override

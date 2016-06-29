@@ -15,6 +15,9 @@ import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.SaveStateManagement.Safeable;
 import de.glooper.game.SaveStateManagement.SaveState;
 import de.glooper.game.Screens.GameScreen.WorldModel;
+import de.glooper.game.model.Entities.Entity;
+import de.glooper.game.model.Entities.IEntity;
+import de.glooper.game.model.Physics.Box2DCategoryBits;
 import de.glooper.game.model.Tile.WorldTile;
 
 /**
@@ -66,7 +69,7 @@ private PointLight lamp;
     private final float BODY_TO_LAMP_RADIUS =0.39f;
     private float bodyToLampStartingAngle=0.49f;
 private final int RAYS_NUM = 500;
-private float lightDistance = 4;
+private float lightDistance = 1.5f;
 
 /**
  * Sprite stuff
@@ -106,7 +109,7 @@ public Hero(World world, OrthographicCamera camera, String heroName, WorldModel 
         fdef.density = density;
         fdef.friction = friction;
         fdef.restitution = restitution;
-        fdef.filter.categoryBits = 0x01;
+        fdef.filter.categoryBits = Box2DCategoryBits.HERO;
         CircleShape shape = new CircleShape();
         shape.setRadius(radius);
         fdef.shape = shape;
@@ -120,8 +123,10 @@ public Hero(World world, OrthographicCamera camera, String heroName, WorldModel 
     world.setContactListener(new ContactListener() {
         @Override
         public void beginContact(Contact contact) {
-            if(contact.getFixtureA().getFilterData().categoryBits == 0x01)die();
-            if(contact.getFixtureB().getFilterData().categoryBits == 0x01)die();
+            if(contact.getFixtureA().getFilterData().categoryBits == Box2DCategoryBits.HERO)
+                contactAction(contact.getFixtureB());
+            if(contact.getFixtureB().getFilterData().categoryBits == Box2DCategoryBits.HERO)
+                contactAction(contact.getFixtureA());
         }
 
         @Override
@@ -156,6 +161,29 @@ public Hero(World world, OrthographicCamera camera, String heroName, WorldModel 
 
 
 
+
+
+    private void contactAction(Fixture fixture){
+        Gdx.app.log(TAG, "ima contact action");
+        if (fixture.getFilterData().categoryBits == Box2DCategoryBits.FOOD){
+            Gdx.app.log(TAG, "hero's got some food YA");
+            stamina += 0.4;
+            if (stamina>1) stamina =1;
+            ((Entity.EntityBodyData)fixture.getBody().getUserData()).needsToBeRemoved = true;
+            //((IEntity)fixture.getBody().getUserData()).removeItself();
+        }
+        if (fixture.getFilterData().categoryBits == Box2DCategoryBits.ROCK){
+            Gdx.app.log(TAG, "hero's got some ROCK YA");
+            die();
+        }
+        if (fixture.getFilterData().categoryBits == Box2DCategoryBits.ENEMY){
+            Gdx.app.log(TAG, "hero's got some ENEMY YA");
+            die();
+        }
+        if (fixture.getFilterData().categoryBits == Box2DCategoryBits.HERO){
+            Gdx.app.log(TAG, "ima hero NOO");
+        }
+    }
 
 
     public float getStamina(){return stamina;}
@@ -225,6 +253,8 @@ public Hero(World world, OrthographicCamera camera, String heroName, WorldModel 
             body.getPosition().y + MathUtils.sin(body.getAngle() + bodyToLampStartingAngle) * BODY_TO_LAMP_RADIUS);
         rayHandler.setCombinedMatrix(camera.combined);
         rayHandler.updateAndRender();
+        //rayHandler.update();
+        //rayHandler.render();
 
         stamina -= deltaTime * 0.03;
         if( stamina <= 0){

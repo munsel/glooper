@@ -22,6 +22,7 @@ public interface IWorldTile {
     void attachSensor(TileBorderSensor sensor);
     boolean isHeroInside();
     Array<IEntity> getEntities();
+    void removeEntity(IEntity entity);
     void drawDebugSensors(ShapeRenderer shapeRenderer);
     void removeBody();
 }
