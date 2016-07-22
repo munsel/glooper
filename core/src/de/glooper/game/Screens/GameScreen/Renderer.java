@@ -53,8 +53,12 @@ public class Renderer implements Disposable {
 
         batch.begin();
         model.getClouds().draw(batch);
-        hero.getSprite().draw(batch);
         model.drawBackground(batch);
+
+        batch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_SRC_ALPHA);
+        hero.drawLamp(batch);
+        batch.setBlendFunction(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
+        hero.draw(batch);
 
         /*
         	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
@@ -82,7 +86,7 @@ public class Renderer implements Disposable {
         Vector3 cameraPos = model.getCamera().position;
         debugShapeRenderer.setColor(1,0,0,1);
         debugShapeRenderer.point(cameraPos.x, cameraPos.y, 0);
-
+/*
         Vector2 heroSpritePos = new Vector2( model.getHero().getSprite().getX(),model.getHero().getSprite().getY());
         debugShapeRenderer.setColor(0,0,1,1);
         debugShapeRenderer.point(heroSpritePos.x, heroSpritePos.y, 0);
@@ -95,7 +99,7 @@ public class Renderer implements Disposable {
         debugShapeRenderer.setColor(1,0 , 1, 1);
         rotationPoint.add(heroSpritePos);
         debugShapeRenderer.point(rotationPoint.x, rotationPoint.y, 0);
-
+*/
         debugShapeRenderer.end();
 
         debugShapeRenderer.setColor(0,0,1,1);

@@ -18,6 +18,11 @@ public class EntityFactory {
     private final static float SEAWEED_WIDTH=.3f;
     private final static float SEAWEED_HEIGHT=.6f;
 
+    private final static float EEL_WIDTH=.8f;
+    private final static float EEL_HEIGHT=.2f;
+
+
+
     public static IEntity getEntity(IWorldTile parent, World world, EntitySaveState saveState){
         Entity entity;
         Gdx.app.log(TAG, saveState.TAG);
@@ -31,19 +36,24 @@ public class EntityFactory {
             Gdx.app.log(TAG, "created seaweed!");
             Gdx.app.log(TAG, Float.toString(parent.getX()+saveState.x));
             Gdx.app.log(TAG, Float.toString(parent.getX()+saveState.y));
-        }else{
+            entity.setBehaviour(new FoodBehaviour(entity));
+        }else if (saveState.TAG.equals("eel")){
+            entity = new Entity(parent, world, AssetHandler.instance.eel,"eel",
+                    parent.getX()+saveState.x,
+                    parent.getY()+saveState.y,
+                    EEL_WIDTH, EEL_HEIGHT,
+                    Box2DCategoryBits.ENEMY);
+            entity.setBehaviour(new EelBehaviour(entity));
+        } else{
             entity = new Entity(parent,world, AssetHandler.instance.seaweed,
                     "enemy",
                     parent.getX()+saveState.x,
                     parent.getY()+saveState.y,
                     SEAWEED_WIDTH, SEAWEED_HEIGHT,
                     Box2DCategoryBits.FOOD);
+            entity.setBehaviour(new FoodBehaviour(entity));
         }
         return entity;
     }
-
-
-
-
 
 }

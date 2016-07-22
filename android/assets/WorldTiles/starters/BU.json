@@ -3,5 +3,9 @@
   tile: {
     TAG: BU
   }
-  entities: [{TAG: seaweed, x:4, y:10}]
+  entities: [{TAG: seaweed, x:4, y:10},
+             {TAG: seaweed, x:2, y:13},
+             {TAG: seaweed, x:2.5, y:13},
+             {TAG: seaweed, x:3, y:13},
+             {TAG: eel, x:3, y:11}]
 }

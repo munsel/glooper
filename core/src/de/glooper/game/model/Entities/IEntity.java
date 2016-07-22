@@ -12,6 +12,11 @@ public interface IEntity {
     float getY();
     void setX(float x);
     void setY(float y);
+    void setXFlip(boolean flip);
+    void setYFlip(boolean flip);
+    void flipX();
+    boolean getXFlip();
+    boolean getYFlip();
     String getName();
     void removeItself();
     void removeBody();

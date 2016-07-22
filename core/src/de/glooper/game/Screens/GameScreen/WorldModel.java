@@ -77,7 +77,8 @@ public class WorldModel implements Safeable, Disposable {
             dynamicTileWorld.update(delta);
             cameraHelper.update(delta);
             statusDrawer.update(camera.position.x, camera.position.y);
-            hud.update(delta, saveState.addToScore(1));
+            //hud.update(delta, saveState.addToScore(1));//+1 every frame
+            hud.update(delta, saveState.getScore());//only score
             clouds.update(delta);
         }
     }
@@ -99,6 +100,8 @@ public class WorldModel implements Safeable, Disposable {
         cameraHelper.load(saveState);
         camera.update();
     }
+
+    public void addToScore(int inc){saveState.addToScore(inc);}
 
     public OrthographicCamera getCamera(){return camera;}
 

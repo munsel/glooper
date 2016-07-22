@@ -14,6 +14,8 @@ import de.glooper.game.model.Tile.WorldTile;
 public class Entity implements IEntity {
     private final String TAG = Entity.class.getName();
 
+
+
     public class EntityBodyData {
         public boolean needsToBeRemoved;
         public EntityBodyData(){needsToBeRemoved = false;}
@@ -22,6 +24,7 @@ public class Entity implements IEntity {
 
     private String name;
     private float x, y;
+    private boolean flipX, flipY;
     private float width, height;
     private float stateTime;
     private Animation animation;
@@ -75,12 +78,19 @@ public class Entity implements IEntity {
     @Override
     public void update(float delta) {
         stateTime+= delta;
+        behaviour.update(delta);
+        body.setTransform(x+width*.5f, y+height*.5f, 0);
+        if ((!animation.getKeyFrame(stateTime).isFlipX() && flipX)
+                || (animation.getKeyFrame(stateTime).isFlipX() && !flipX))
+            animation.getKeyFrame(stateTime).flip(true, false);
+
         if (((EntityBodyData)body.getUserData()).needsToBeRemoved) removeItself();
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        batch.draw(animation.getKeyFrame(stateTime), x, y, width, height);
+        batch.draw(animation.getKeyFrame(stateTime)
+                , x, y, width, height);
     }
 
     @Override
@@ -94,6 +104,30 @@ public class Entity implements IEntity {
 
     @Override
     public void setY(float y) {this.y = y;}
+
+    @Override
+    public void setXFlip(boolean flip) {
+        flipX = flip;
+    }
+
+    @Override
+    public void setYFlip(boolean flip) {
+        flipY = flip;
+    }
+
+    @Override
+    public void flipX() {
+    }
+
+    @Override
+    public boolean getXFlip() {
+        return flipX;
+    }
+
+    @Override
+    public boolean getYFlip() {
+        return flipY;
+    }
 
     @Override
     public String getName() {

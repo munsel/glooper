@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -66,10 +67,12 @@ private Body body;
  */
 private RayHandler rayHandler;
 private PointLight lamp;
-    private final float BODY_TO_LAMP_RADIUS =0.39f;
-    private float bodyToLampStartingAngle=0.49f;
-private final int RAYS_NUM = 500;
-private float lightDistance = 1.5f;
+        private Sprite lampSprite;
+        private final float BODY_TO_LAMP_RADIUS =0.39f;
+        private float bodyToLampStartingAngle=0.49f;
+        private final int RAYS_NUM = 500;
+        private float lightDistance = 7f;
+        private float lightAlpha = 1f;
 
 /**
  * Sprite stuff
@@ -150,6 +153,13 @@ public Hero(World world, OrthographicCamera camera, String heroName, WorldModel 
                 lightDistance, 0,0);
         lamp.setSoftnessLength(0.5f);
 
+    Texture lampTexture = new Texture("lamp.png");
+    lampTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+    lampSprite = new Sprite(lampTexture);
+    lampSprite.setSize(2*lightDistance, 2*lightDistance);
+
+
+
         Texture texture = new Texture(heroName+".png");
         sprite = new Sprite(texture);
         sprite.setSize(SIZE_X, SIZE_Y);
@@ -169,6 +179,7 @@ public Hero(World world, OrthographicCamera camera, String heroName, WorldModel 
             Gdx.app.log(TAG, "hero's got some food YA");
             stamina += 0.4;
             if (stamina>1) stamina =1;
+            model.addToScore(1);
             ((Entity.EntityBodyData)fixture.getBody().getUserData()).needsToBeRemoved = true;
             //((IEntity)fixture.getBody().getUserData()).removeItself();
         }
@@ -211,7 +222,16 @@ public Hero(World world, OrthographicCamera camera, String heroName, WorldModel 
         body.setAngularVelocity(angularVelocity);
     }
 
-    public Sprite getSprite(){return sprite;}
+    @Override
+    public void draw(SpriteBatch batch) {
+        //rayHandler.render();
+        sprite.draw(batch);
+    }
+
+    @Override
+    public void drawLamp(SpriteBatch batch) {
+        lampSprite.draw(batch,lightAlpha);
+    }
 
 
     public void init(SaveState saveState){
@@ -248,18 +268,30 @@ public Hero(World world, OrthographicCamera camera, String heroName, WorldModel 
         body.setLinearVelocity(velocity2D.add(wiggleOffset));
 
         alignSpriteToBody();
+        Vector2 lampPos = getLampPosition();
+        lampSprite.setPosition(lampPos.x, lampPos.y);
 
-        lamp.setPosition(body.getPosition().x + MathUtils.cos(body.getAngle() + bodyToLampStartingAngle) * BODY_TO_LAMP_RADIUS,
-            body.getPosition().y + MathUtils.sin(body.getAngle() + bodyToLampStartingAngle) * BODY_TO_LAMP_RADIUS);
+
+        lamp.setPosition(lampPos.x, lampPos.y);
         rayHandler.setCombinedMatrix(camera.combined);
-        rayHandler.updateAndRender();
-        //rayHandler.update();
+        //rayHandler.updateAndRender();
+        rayHandler.update();
         //rayHandler.render();
+
 
         stamina -= deltaTime * 0.03;
         if( stamina <= 0){
             die();
         }
+    }
+
+    public Vector2 getLampPosition(){
+        Vector2 lampPos = new Vector2();
+        lampPos.x =body.getPosition().x + MathUtils.cos(body.getAngle() + bodyToLampStartingAngle) * BODY_TO_LAMP_RADIUS;
+        lampPos.x -= lampSprite.getWidth()/2;
+        lampPos.y =body.getPosition().y + MathUtils.sin(body.getAngle() + bodyToLampStartingAngle) * BODY_TO_LAMP_RADIUS;
+        lampPos.y -= lampSprite.getHeight()/2;
+        return lampPos;
     }
 
     private void alignSpriteToBody(){
@@ -284,20 +316,12 @@ public Hero(World world, OrthographicCamera camera, String heroName, WorldModel 
         return body.getPosition();/* new Vector2(sprite.getX(), sprite.getY()*/
     }
 
-    public Vector2 getLampPosition() {
-        return lamp.getPosition();
-    }
-
-    public Texture getTexture() {
-        return null;
-    }
-
     public float getRotation() {
         return body.getTransform().getRotation();
     }
 
     public void dispose() {
-        rayHandler.dispose();
+        //rayHandler.dispose();
     }
 
     @Override

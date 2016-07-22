@@ -1,56 +1,83 @@
 package de.glooper.game.Screens.MenuScreen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import de.glooper.game.GlooperMainClass;
-import de.glooper.game.Screens.MenuScreen.Animations.GlooperEyes;
+import de.glooper.game.Screens.GameScreen.HelperClasses.AssetHandler;
 
 /**
  * Created by munsel on 06.06.15.
  */
 public class MenuScreen implements Screen {
-
     private static final String TAG = MenuScreen.class.getSimpleName();
 
-
-    private GlooperEyes glooperEyes;
-    private SpriteBatch batch;
-
     private GlooperMainClass game;
-    private InputProcessor processor;
+    private Stage stage;
 
     public MenuScreen(final GlooperMainClass game){
         this.game = game;
-        glooperEyes = new GlooperEyes();
-        batch = new SpriteBatch();
+        stage = new Stage();
+        Table table = new Table();
+        table.setFillParent(true);
+        Skin skin = AssetHandler.instance.skin;
 
-        processor = new InputAdapter() {
-
+        TextButton startButton = new TextButton("start", skin);
+        startButton.addListener(new ClickListener(){
             @Override
-            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 game.startGame();
-                return true;
             }
-        };
+        });
+
+        TextButton aboutButton = new TextButton("about", skin);
+        aboutButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+            }
+        });
+
+        TextButton quitButton = new TextButton("quit", skin);
+        quitButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                Gdx.app.exit();
+            }
+        });
+
+        CheckBox soundsCheckBox = new CheckBox("sound",skin);
+        CheckBox musicOnCheckBox = new CheckBox("music", skin);
+
+        table.add(startButton).left().fillX().expandX();
+        table.add(soundsCheckBox).right();
+        table.row();
+        table.add(aboutButton).left().expandX();
+        table.add(musicOnCheckBox).right();
+        table.row();
+        table.add(quitButton).center();
+
+
+        stage.addActor(table);
     }
 
     public void show() {
-        Gdx.input.setInputProcessor(processor);
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-        glooperEyes.update(delta);
-
-        batch.begin();
-        if (glooperEyes.getCurrentTexture() != null)
-            batch.draw(glooperEyes.getCurrentTexture(), 30, 100);
-        batch.end();
+        stage.act();
+        stage.draw();
     }
 
     @Override
@@ -75,6 +102,6 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
     }
 }

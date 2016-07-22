@@ -102,6 +102,9 @@ project(":core") {
     }
 }
 
+
+
+
 tasks.eclipse.doLast {
     delete ".project"
 }

@@ -28,6 +28,7 @@ import java.util.stream.Stream;
  * Created by munsel on 01.08.15. 
  */
 public class AssetHandler implements Disposable, AssetErrorListener {
+    private static final String TAG = AssetHandler.class.getSimpleName();
     /**
      * this AssetHandler is handling all the Assets:
      * Textures
@@ -37,12 +38,11 @@ public class AssetHandler implements Disposable, AssetErrorListener {
      * this is a critical part of our App, because it handles
      * all the stuff that drains the memory!
      */
-    private static final String TAG = AssetHandler.class.getSimpleName();
 
     public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 
-    public static  AssetHandler instance = new AssetHandler();
 
+    public static  AssetHandler instance = new AssetHandler();
 
 
     /**
@@ -61,6 +61,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
     public TextureRegion[] clouds;
 
     public TextureAtlas seaweed;
+    public TextureAtlas eel;
 
     public ITileSet starterTiles;
 
@@ -72,13 +73,15 @@ public class AssetHandler implements Disposable, AssetErrorListener {
 
     private AssetHandler(){}
 
-    public void init(AssetManager assetManager){
+    public void startInit(AssetManager assetManager){
         this.assetManager = assetManager;
         assetManager.setErrorListener(this);
 
         directoryName = simpleTilesDirectoryName;
         /**this would initiate every available map which is 2048px * 2048px
          * ...so, we do not want this to happen
+         *
+         * .... ok fuck it! we load the whole set!
          */
         //for(int i = 0; i < names.length; i++){
           //  assetManager.load(simpleTilesDirectoryName+names[i], Texture.class);
@@ -89,7 +92,12 @@ public class AssetHandler implements Disposable, AssetErrorListener {
          * so only one image of 2048px * 2048px in merory
          * therefore, a x cross with four openings will be used
          */
-        assetManager.load(directoryName + "xCross.png", Texture.class);
+        //assetManager.load(directoryName + "xCross.png", Texture.class);
+        /**
+         * this needs to be loaded first, so that the splashScreen can show something!
+         */
+        assetManager.load("Heros/glooper.pack", TextureAtlas.class);
+        assetManager.finishLoading();
 
         starterTiles = new StarterTiles();
         String[] starterTileSetNames = starterTiles.getAllTextureFileNames();
@@ -98,27 +106,27 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         }
 
 
-        assetManager.load("Heros/glooper.pack", TextureAtlas.class);
         assetManager.load("Backgrounds/clouds.atlas", TextureAtlas.class);
         assetManager.load("Entities/seaweed.pack", TextureAtlas.class);
+        assetManager.load("Entities/eel.atlas", TextureAtlas.class);
         /**
          * but now we must direct the corresponding
          * Textures handled by the assetManager
          * ... in runtime
          */
-        assetManager.finishLoading();
-        Texture startTileTexture = assetManager.get(directoryName+"xCross.png", Texture.class);
-        startTileTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        firstWorldTileAsset = new XCross(startTileTexture);
 
+       // Texture startTileTexture = assetManager.get(directoryName+"xCross.png", Texture.class);
+        //startTileTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        //firstWorldTileAsset = new XCross(startTileTexture);
+    }
+
+    public void finishInit(){
         tileAssets = new HashMap<String, ATextureAsset>();
-
+        String[] starterTileSetNames = starterTiles.getAllTextureFileNames();
         for (int i = 0; i<starterTileSetNames.length; i++ ){
             Texture tileTexture = assetManager.get(directoryName+starterTileSetNames[i]+".png", Texture.class);
             tileAssets.put(starterTileSetNames[i], new TileAsset(tileTexture));
         }
-
-
         TextureAtlas glooperAtlas = assetManager.get("Heros/glooper.pack");
         glooperAsset = new Glooper(glooperAtlas);
 
@@ -129,6 +137,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         }
 
         seaweed = assetManager.get("Entities/seaweed.pack");
+        eel = assetManager.get("Entities/eel.atlas");
 
         skin = initSkin();
     }

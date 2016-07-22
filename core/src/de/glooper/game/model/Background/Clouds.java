@@ -38,9 +38,9 @@ public class Clouds implements IBackground {
         cloudsV1 = new Array<Sprite>();
         cloudsV2 = new Array<Sprite>();
         cloudsV3 = new Array<Sprite>();
-        createClouds(cloudsV1, 50);
-        createClouds(cloudsV2,60);
-        createClouds(cloudsV3, 60);
+        createClouds(cloudsV1, 20);
+        createClouds(cloudsV2,20);
+        createClouds(cloudsV3, 20);
     }
     public void init(){
         initializeCloudDistribution(cloudsV1);
@@ -51,7 +51,8 @@ public class Clouds implements IBackground {
     private void createClouds(Array<Sprite> clouds, int nClouds) {
         for (int nCloud = 0; nCloud < nClouds; nCloud++) {
             Sprite sprite = new Sprite(cloudsRegions[MathUtils.random(5)]);
-            sprite.setSize(1, 1.5f);
+            float scaleFactor = MathUtils.random(4);
+            sprite.setSize(scaleFactor*1, scaleFactor*1.5f);
             float red = MathUtils.random()*.1f;
             float green = red + MathUtils.random()*.01f;
             float blue = red + MathUtils.random()*.01f;

@@ -32,6 +32,7 @@ public class HUD  extends Stage{
     private Button backToParentButton;
     private Button newGameButton;
     private TextField playerNameTextField;
+    private List
 
     private Button pauseButton;
     private Skin skin;

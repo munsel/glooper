@@ -1,0 +1,47 @@
+
+seaweed.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+weed1
+  rotate: false
+  xy: 1, 1
+  size: 51, 93
+  orig: 51, 93
+  offset: 0, 0
+  index: -1
+weed5
+  rotate: false
+  xy: 54, 1
+  size: 51, 93
+  orig: 51, 93
+  offset: 0, 0
+  index: -1
+weed4
+  rotate: false
+  xy: 107, 1
+  size: 51, 93
+  orig: 51, 93
+  offset: 0, 0
+  index: -1
+weed2
+  rotate: false
+  xy: 160, 1
+  size: 51, 93
+  orig: 51, 93
+  offset: 0, 0
+  index: -1
+weed6
+  rotate: false
+  xy: 213, 1
+  size: 51, 93
+  orig: 51, 93
+  offset: 0, 0
+  index: -1
+weed3
+  rotate: false
+  xy: 266, 1
+  size: 51, 93
+  orig: 51, 93
+  offset: 0, 0
+  index: -1

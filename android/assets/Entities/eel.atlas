@@ -1,0 +1,75 @@
+
+eel.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ee
+  rotate: false
+  xy: 1, 1
+  size: 99, 38
+  orig: 99, 38
+  offset: 0, 0
+  index: 0
+ee
+  rotate: false
+  xy: 102, 1
+  size: 99, 38
+  orig: 99, 38
+  offset: 0, 0
+  index: 8
+ee
+  rotate: false
+  xy: 203, 1
+  size: 99, 38
+  orig: 99, 38
+  offset: 0, 0
+  index: 3
+ee
+  rotate: false
+  xy: 304, 1
+  size: 99, 38
+  orig: 99, 38
+  offset: 0, 0
+  index: 9
+ee
+  rotate: false
+  xy: 405, 1
+  size: 99, 38
+  orig: 99, 38
+  offset: 0, 0
+  index: 4
+ee
+  rotate: false
+  xy: 506, 1
+  size: 99, 38
+  orig: 99, 38
+  offset: 0, 0
+  index: 7
+ee
+  rotate: false
+  xy: 607, 1
+  size: 99, 38
+  orig: 99, 38
+  offset: 0, 0
+  index: 5
+ee
+  rotate: false
+  xy: 708, 1
+  size: 99, 38
+  orig: 99, 38
+  offset: 0, 0
+  index: 1
+ee
+  rotate: false
+  xy: 809, 1
+  size: 99, 38
+  orig: 99, 38
+  offset: 0, 0
+  index: 6
+ee
+  rotate: false
+  xy: 910, 1
+  size: 99, 38
+  orig: 99, 38
+  offset: 0, 0
+  index: 2
