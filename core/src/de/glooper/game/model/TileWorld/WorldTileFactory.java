@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.SerializationException;
 import de.glooper.game.SaveStateManagement.Entities.EntitySaveState;
 import de.glooper.game.SaveStateManagement.Entities.TileSaveState;
@@ -32,6 +33,8 @@ public class WorldTileFactory {
     private Hero hero;
 
     private ITileSet tileSet = new StarterTiles();
+    //private Pool<WorldTile> worldTilePool;
+
 
     private OrthographicCamera camera;
 
@@ -100,8 +103,12 @@ public class WorldTileFactory {
         String pick = tileNames[randPick];
         Gdx.app.log(TAG, pick);
 
+        /**TODO
+         * ersetze tile constructor
+         */
         WorldTile tile = new WorldTile(AssetHandler.instance.tileAssets.get(pick).getTexture()
                 ,pick,world,dynamicWorld, hero,x,y,0,0,tileSet.getNameOfSet(), camera);
+        //WorldTile tile =
         tile.setEntityState(tile.getInitialState());
         return tile;
     }

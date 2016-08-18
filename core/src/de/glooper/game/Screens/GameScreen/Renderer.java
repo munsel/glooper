@@ -1,17 +1,17 @@
 package de.glooper.game.Screens.GameScreen;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.Screens.GameScreen.HelperClasses.HUD;
-import de.glooper.game.Screens.GameScreen.HelperClasses.HeroStatusDrawer;
+import de.glooper.game.Screens.GameScreen.HelperClasses.StomachStatusDrawer;
 import de.glooper.game.model.Heros.IHero;
 
 /**
@@ -25,9 +25,10 @@ public class Renderer implements Disposable {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer debugShapeRenderer;
+    private OrthogonalTiledMapRenderer tiledMapRenderer;
 
     private HUD hud;
-    private HeroStatusDrawer statusDrawer;
+    private StomachStatusDrawer statusDrawer;
 
     private IHero hero;
 
@@ -36,26 +37,44 @@ public class Renderer implements Disposable {
         this.hero = model.getHero();
 
         this.hud = model.getHud();
-        this.statusDrawer = model.getStatusDrawer();
+        //this.statusDrawer = model.getStatusDrawer();
 
         camera = model.getCamera();
         batch = new SpriteBatch();
+
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(model.getMap(),1f/128f, batch);
+
+
 
         debugRenderer = new Box2DDebugRenderer();
         debugShapeRenderer = new ShapeRenderer();
 
         world = model.getWorld();
+        //camera.zoom = 15;
     }
-
+    float pad = .7f;
     public void render(float deltaTime){
+
         batch.setProjectionMatrix(camera.combined);
 
 
         batch.begin();
         model.getClouds().draw(batch);
-        model.drawBackground(batch);
+        batch.end();
 
+//        model.drawBackground(batch);
+        //tiledMapRenderer.setView(camera);
+
+        float width = camera.viewportWidth * camera.zoom+pad;
+        float height = camera.viewportHeight * camera.zoom+pad;
+        tiledMapRenderer.setView(camera.combined,
+                camera.position.x - width / 2-pad, camera.position.y - height / 2 -pad, width, height);
+
+        tiledMapRenderer.render();
+
+        batch.begin();
         batch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_SRC_ALPHA);
+
         hero.drawLamp(batch);
         batch.setBlendFunction(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
         hero.draw(batch);
@@ -67,7 +86,7 @@ public class Renderer implements Disposable {
 
         //batch.draw(hero.getTexture(), hero.getPosition().x, hero.getPosition().y, 0,0, hero.getRotation() );
 
-        statusDrawer.draw(batch);
+        //statusDrawer.draw(batch);
         batch.end();
         hud.draw();
         //debugRenderings();

@@ -7,7 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import de.glooper.game.ScoreBoardManagement.ScoreBoardLoader;
+import de.glooper.game.ScoreBoardManagement.ScoreEntry;
 import de.glooper.game.Screens.GameScreen.GameScreen;
+import de.glooper.game.model.Heros.Hero;
 
 /**
  * Created by munsel on 13.09.15.
@@ -17,10 +20,12 @@ import de.glooper.game.Screens.GameScreen.GameScreen;
 public class HUD  extends Stage{
 
     private GameScreen screen;
+    private Hero hero;
 
     private Table table;
     private String scoreString;
     private String playerName;
+    private SimpleStatusDrawer statusDrawer;
     private Label scoreLabel;
 
 
@@ -32,16 +37,17 @@ public class HUD  extends Stage{
     private Button backToParentButton;
     private Button newGameButton;
     private TextField playerNameTextField;
-    private List
+
+    private List<ScoreEntry> scoreEntryList;
+
 
     private Button pauseButton;
     private Skin skin;
 
-
-
-    public HUD(final GameScreen screen){
+    public HUD(final GameScreen screen, Hero hero){
         super();
         this.screen = screen;
+        this.hero = hero;
         table = new Table();
         table.setFillParent(true);
         table.pad(7f);
@@ -75,6 +81,10 @@ public class HUD  extends Stage{
                 Gdx.files.internal("HUD/scoreFont.fnt"),
                 Gdx.files.internal("HUD/scoreFont.png"), false
         );*/
+
+        statusDrawer = new SimpleStatusDrawer(hero, skin);
+        table.add(statusDrawer).right();
+
         scoreLabel = new Label(scoreString, skin);
 
         table.add(scoreLabel).top().right().pad(0.5f);
@@ -82,6 +92,7 @@ public class HUD  extends Stage{
         table.setTouchable(Touchable.enabled);
 
         gameOverMenu = new Table();
+
         gameOverLabel = new Label("Game Over!", skin);
         gameOverMessageLabel = new Label("you failed ):", skin);
 
@@ -96,6 +107,11 @@ public class HUD  extends Stage{
                 Gdx.app.log("submit score", "{score: "+scoreString+", name: "+playerName+"}");
             }
         });
+
+        scoreEntryList = new List<ScoreEntry>(skin, "scoreboard");
+        scoreEntryList.setItems(ScoreBoardLoader.getScoreEntries(1));
+        ScrollPane scoreBoardListScroller = new ScrollPane(scoreEntryList);
+
 
         newGameButton = new TextButton("restart", skin);
         newGameButton.addListener(new ClickListener(){
@@ -120,6 +136,8 @@ public class HUD  extends Stage{
         gameOverMenu.add(finalScorelabel);
         gameOverMenu.row();
         gameOverMenu.add(playerNameTextField).center().expandX().fillX();
+        gameOverMenu.row();
+        gameOverMenu.add(scoreBoardListScroller);
         gameOverMenu.row();
         gameOverMenu.add(submitScoreButton).right();
         gameOverMenu.row();

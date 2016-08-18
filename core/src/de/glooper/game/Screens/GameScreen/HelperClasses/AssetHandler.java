@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,6 +12,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.maps.Map;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.ATextureAsset;
@@ -69,6 +73,8 @@ public class AssetHandler implements Disposable, AssetErrorListener {
 
     public Glooper glooperAsset;
 
+    public TiledMap map;
+
     private String directoryName;
 
     private AssetHandler(){}
@@ -99,12 +105,13 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         assetManager.load("Heros/glooper.pack", TextureAtlas.class);
         assetManager.finishLoading();
 
+        /*
         starterTiles = new StarterTiles();
         String[] starterTileSetNames = starterTiles.getAllTextureFileNames();
         for (int i = 0; i<starterTileSetNames.length; i++ ){
             assetManager.load(directoryName+ starterTileSetNames[i]+".png", Texture.class);
         }
-
+        */
 
         assetManager.load("Backgrounds/clouds.atlas", TextureAtlas.class);
         assetManager.load("Entities/seaweed.pack", TextureAtlas.class);
@@ -115,6 +122,13 @@ public class AssetHandler implements Disposable, AssetErrorListener {
          * ... in runtime
          */
 
+        /**
+         * now we load a tiled .tmx file
+         */
+        // only needed once
+        assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+        assetManager.load("WorldTiles/rocks256/rocks.tmx", TiledMap.class);
+
        // Texture startTileTexture = assetManager.get(directoryName+"xCross.png", Texture.class);
         //startTileTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         //firstWorldTileAsset = new XCross(startTileTexture);
@@ -122,11 +136,11 @@ public class AssetHandler implements Disposable, AssetErrorListener {
 
     public void finishInit(){
         tileAssets = new HashMap<String, ATextureAsset>();
-        String[] starterTileSetNames = starterTiles.getAllTextureFileNames();
+/*        String[] starterTileSetNames = starterTiles.getAllTextureFileNames();
         for (int i = 0; i<starterTileSetNames.length; i++ ){
             Texture tileTexture = assetManager.get(directoryName+starterTileSetNames[i]+".png", Texture.class);
             tileAssets.put(starterTileSetNames[i], new TileAsset(tileTexture));
-        }
+        }*/
         TextureAtlas glooperAtlas = assetManager.get("Heros/glooper.pack");
         glooperAsset = new Glooper(glooperAtlas);
 
@@ -138,6 +152,8 @@ public class AssetHandler implements Disposable, AssetErrorListener {
 
         seaweed = assetManager.get("Entities/seaweed.pack");
         eel = assetManager.get("Entities/eel.atlas");
+
+        map = assetManager.get("WorldTiles/rocks256/rocks.tmx");
 
         skin = initSkin();
     }
@@ -191,6 +207,6 @@ public class AssetHandler implements Disposable, AssetErrorListener {
     @Override
     public void dispose() {
         assetManager.dispose();
-
+        map.dispose();
     }
 }

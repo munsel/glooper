@@ -18,7 +18,7 @@ import de.glooper.game.Screens.GameScreen.WorldModel;
  *
  * Created by munsel on 02.09.15.
  */
-public class HeroStatusDrawer implements Disposable {
+public class StomachStatusDrawer implements Disposable {
 
     private final float SIZE_X = 1;
     private final float SIZE_y = 1;
@@ -37,7 +37,7 @@ public class HeroStatusDrawer implements Disposable {
     private Sprite drawerForeground;
     private Texture texture;
 
-    public HeroStatusDrawer(Hero hero){
+    public StomachStatusDrawer(Hero hero){
         this.hero = hero;
         texture = new Texture(Gdx.files.internal("HUD/stomach.png"));
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);

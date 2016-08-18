@@ -3,18 +3,16 @@ package de.glooper.game.Screens.GameScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import de.glooper.game.SaveStateManagement.Safeable;
 import de.glooper.game.SaveStateManagement.SaveState;
 import de.glooper.game.SaveStateManagement.SaveStateManager;
-import de.glooper.game.Screens.GameScreen.HelperClasses.CameraHelper;
-import de.glooper.game.Screens.GameScreen.HelperClasses.HUD;
-import de.glooper.game.Screens.GameScreen.HelperClasses.HeroStatusDrawer;
+import de.glooper.game.Screens.GameScreen.HelperClasses.*;
 import de.glooper.game.model.Heros.Glooper;
 import de.glooper.game.model.Heros.Hero;
 import de.glooper.game.model.Background.Clouds;
@@ -39,8 +37,10 @@ public class WorldModel implements Safeable, Disposable {
     private OrthographicCamera camera;
     private CameraHelper cameraHelper;
 
-    private HeroStatusDrawer statusDrawer;
+    private StomachStatusDrawer statusDrawer;
     private HUD hud;
+
+    private TiledMap map;
 
     private Pool enemies;
 
@@ -58,11 +58,13 @@ public class WorldModel implements Safeable, Disposable {
 
         clouds = new Clouds(camera);
         world = new World(new Vector2(0,0), false);
+        map = AssetHandler.instance.map;
+        TileObjectUtil.parseTiledObjectLayer(world,map.getLayers().get("collision").getObjects());
         hero = new Glooper(world, camera, this);
-        dynamicTileWorld = DynamicTileWorld.getInstance(world, hero,camera, saveState);
+        //dynamicTileWorld = DynamicTileWorld.getInstance(world, hero,camera, saveState);
 
-        statusDrawer = new HeroStatusDrawer(hero);
-        hud = new HUD(this.screen);
+        //statusDrawer = new StomachStatusDrawer(hero);
+        hud = new HUD(this.screen, hero);
         cameraHelper = new CameraHelper(this);
         //init();
         //camera.zoom = 15f;
@@ -74,9 +76,8 @@ public class WorldModel implements Safeable, Disposable {
         if (!screen.isPaused() && !gameOver) {
             hero.update(delta);
             world.step(1.f / 60.f, 5, 5);
-            dynamicTileWorld.update(delta);
+          //  dynamicTileWorld.update(delta);
             cameraHelper.update(delta);
-            statusDrawer.update(camera.position.x, camera.position.y);
             //hud.update(delta, saveState.addToScore(1));//+1 every frame
             hud.update(delta, saveState.getScore());//only score
             clouds.update(delta);
@@ -93,21 +94,23 @@ public class WorldModel implements Safeable, Disposable {
                 world.destroyBody(body);
             }*/
         }
-        clouds.init();
-        dynamicTileWorld.init();
+        //dynamicTileWorld.init();
         hud.restart();
         hero.init(saveState);
         cameraHelper.load(saveState);
         camera.update();
+        clouds.init();
     }
+
+
 
     public void addToScore(int inc){saveState.addToScore(inc);}
 
     public OrthographicCamera getCamera(){return camera;}
 
-    public void drawBackground(SpriteBatch batch){
+/*    public void drawBackground(SpriteBatch batch){
         dynamicTileWorld.draw(batch);
-    }
+    }*/
 
     public Hero getHero(){
         return hero;
@@ -127,9 +130,9 @@ public class WorldModel implements Safeable, Disposable {
     public SaveState getSaveState(){
         return saveState;
     }
-    public String getTileName(){
+    /*public String getTileName(){
         return dynamicTileWorld.getCurrentName();
-    }
+    }*/
 
     public World getWorld() {
         return world;
@@ -138,7 +141,7 @@ public class WorldModel implements Safeable, Disposable {
     public HUD getHud() {
         return hud;
     }
-    public HeroStatusDrawer getStatusDrawer() {
+    public StomachStatusDrawer getStatusDrawer() {
         return statusDrawer;
     }
 
@@ -147,8 +150,11 @@ public class WorldModel implements Safeable, Disposable {
 
     }
 
+    public TiledMap getMap(){
+        return map;
+    }
     public void debugDrawSensors(ShapeRenderer shapeRenderer){
-        dynamicTileWorld.drawDebugSensors(shapeRenderer);
+        //dynamicTileWorld.drawDebugSensors(shapeRenderer);
     }
 
     public Clouds getClouds() {
@@ -159,7 +165,7 @@ public class WorldModel implements Safeable, Disposable {
     public void save(SaveState saveState) {
         hero.save(saveState);
         saveState.setGameOver(isGameOver());
-        dynamicTileWorld.save(saveState);
+       // dynamicTileWorld.save(saveState);
         cameraHelper.save(saveState);
     }
 

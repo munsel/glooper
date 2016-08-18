@@ -3,18 +3,9 @@ package de.glooper.game.Screens.GameScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.uwsoft.editor.renderer.resources.ResourceManager;
 import de.glooper.game.GlooperMainClass;
 import de.glooper.game.SaveStateManagement.SaveStateManager;
-import de.glooper.game.Screens.GameScreen.HelperClasses.AssetHandler;
-import de.glooper.game.Screens.GameScreen.HelperClasses.HUD;
-import de.glooper.game.Screens.GameScreen.HelperClasses.HeroStatusDrawer;
 
 /**
  * Created by munsel on 06.06.15.
