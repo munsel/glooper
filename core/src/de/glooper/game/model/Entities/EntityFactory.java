@@ -22,7 +22,7 @@ public class EntityFactory {
     private final static float EEL_HEIGHT=.2f;
 
 
-
+/*
     public static IEntity getEntity(IWorldTile parent, World world, EntitySaveState saveState){
         Entity entity;
         Gdx.app.log(TAG, saveState.TAG);
@@ -54,6 +54,6 @@ public class EntityFactory {
             entity.setBehaviour(new FoodBehaviour(entity));
         }
         return entity;
-    }
+    }*/
 
 }

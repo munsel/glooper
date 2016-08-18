@@ -50,11 +50,11 @@ public class SaveState  {
         frames = 0;
         score = 0;
         heroRot = 0;
-        heroX = WorldTile.TILE_SIZE/2;
-        heroY = WorldTile.TILE_SIZE/2;
+        heroX = WorldTile.TILE_SIZE/5;
+        heroY = WorldTile.TILE_SIZE/4;
         heroStamina = 1;
-        cameraData.x = WorldTile.TILE_SIZE/2;
-        cameraData.y = WorldTile.TILE_SIZE/2;
+        cameraData.x = heroX;
+        cameraData.y = heroY;
         tiles.clear();
         tiles.add(WorldTileFactory.getStartTileEntity());
     }

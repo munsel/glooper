@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.Screens.GameScreen.HelperClasses.HUD;
 import de.glooper.game.Screens.GameScreen.HelperClasses.StomachStatusDrawer;
+import de.glooper.game.model.Entities.IEntity;
 import de.glooper.game.model.Heros.IHero;
 
 /**
@@ -73,6 +74,10 @@ public class Renderer implements Disposable {
         tiledMapRenderer.render();
 
         batch.begin();
+        for (IEntity entity: model.getEntities()){
+            entity.render(batch);
+        }
+
         batch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_SRC_ALPHA);
 
         hero.drawLamp(batch);

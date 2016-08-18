@@ -7,12 +7,14 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import de.glooper.game.SaveStateManagement.Safeable;
 import de.glooper.game.SaveStateManagement.SaveState;
 import de.glooper.game.SaveStateManagement.SaveStateManager;
 import de.glooper.game.Screens.GameScreen.HelperClasses.*;
+import de.glooper.game.model.Entities.IEntity;
 import de.glooper.game.model.Heros.Glooper;
 import de.glooper.game.model.Heros.Hero;
 import de.glooper.game.model.Background.Clouds;
@@ -37,12 +39,11 @@ public class WorldModel implements Safeable, Disposable {
     private OrthographicCamera camera;
     private CameraHelper cameraHelper;
 
-    private StomachStatusDrawer statusDrawer;
     private HUD hud;
 
     private TiledMap map;
 
-    private Pool enemies;
+    private Array<IEntity> entities;
 
     private SaveState saveState;
 
@@ -59,11 +60,11 @@ public class WorldModel implements Safeable, Disposable {
         clouds = new Clouds(camera);
         world = new World(new Vector2(0,0), false);
         map = AssetHandler.instance.map;
-        TileObjectUtil.parseTiledObjectLayer(world,map.getLayers().get("collision").getObjects());
+        entities = new Array<IEntity>();
+        TileObjectUtil.parseTiledObjectLayer(world,entities,map.getLayers().get("collision").getObjects());
         hero = new Glooper(world, camera, this);
         //dynamicTileWorld = DynamicTileWorld.getInstance(world, hero,camera, saveState);
 
-        //statusDrawer = new StomachStatusDrawer(hero);
         hud = new HUD(this.screen, hero);
         cameraHelper = new CameraHelper(this);
         //init();
@@ -78,6 +79,7 @@ public class WorldModel implements Safeable, Disposable {
             world.step(1.f / 60.f, 5, 5);
           //  dynamicTileWorld.update(delta);
             cameraHelper.update(delta);
+            for (IEntity entity:entities)entity.update(delta);
             //hud.update(delta, saveState.addToScore(1));//+1 every frame
             hud.update(delta, saveState.getScore());//only score
             clouds.update(delta);
@@ -95,6 +97,7 @@ public class WorldModel implements Safeable, Disposable {
             }*/
         }
         //dynamicTileWorld.init();
+        for (IEntity entity: entities)entity.reset();
         hud.restart();
         hero.init(saveState);
         cameraHelper.load(saveState);
@@ -141,14 +144,13 @@ public class WorldModel implements Safeable, Disposable {
     public HUD getHud() {
         return hud;
     }
-    public StomachStatusDrawer getStatusDrawer() {
-        return statusDrawer;
-    }
 
     @Override
     public void dispose() {
 
     }
+
+    public Array<IEntity> getEntities(){return entities;}
 
     public TiledMap getMap(){
         return map;

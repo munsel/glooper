@@ -242,7 +242,7 @@ public class WorldTile implements IWorldTile, Disposable{
                 Gdx.app.log(TAG, entity.TAG);
                 Gdx.app.log(TAG, Float.toString(entity.x));
                 Gdx.app.log(TAG, Float.toString(entity.y));
-                entities.add(EntityFactory.getEntity(this, world, entity));
+                //entities.add(EntityFactory.getEntity(this, world, entity));
             }
         }
     }
