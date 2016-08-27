@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public interface IEntity {
     void reset();
     void setUsed();
+    boolean isUsed();
+
     void update(float delta);
     void render(SpriteBatch batch);
     float getX();

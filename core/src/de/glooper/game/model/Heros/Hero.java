@@ -271,7 +271,6 @@ public Hero(World world, OrthographicCamera camera, String heroName, WorldModel 
         Vector2 lampPos = getLampPosition();
         lampSprite.setPosition(lampPos.x, lampPos.y);
 
-
         lamp.setPosition(lampPos.x, lampPos.y);
         rayHandler.setCombinedMatrix(camera.combined);
         //rayHandler.updateAndRender();

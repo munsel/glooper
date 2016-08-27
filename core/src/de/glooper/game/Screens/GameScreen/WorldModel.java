@@ -97,7 +97,10 @@ public class WorldModel implements Safeable, Disposable {
             }*/
         }
         //dynamicTileWorld.init();
-        for (IEntity entity: entities)entity.reset();
+        for (IEntity entity: entities){
+            if (entity.isUsed())
+                entity.reset();
+        }
         hud.restart();
         hero.init(saveState);
         cameraHelper.load(saveState);

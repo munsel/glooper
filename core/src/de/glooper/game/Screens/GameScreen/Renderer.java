@@ -29,23 +29,18 @@ public class Renderer implements Disposable {
     private OrthogonalTiledMapRenderer tiledMapRenderer;
 
     private HUD hud;
-    private StomachStatusDrawer statusDrawer;
 
     private IHero hero;
 
     public Renderer(WorldModel model ){
         this.model = model;
         this.hero = model.getHero();
-
         this.hud = model.getHud();
-        //this.statusDrawer = model.getStatusDrawer();
 
         camera = model.getCamera();
         batch = new SpriteBatch();
 
         tiledMapRenderer = new OrthogonalTiledMapRenderer(model.getMap(),1f/128f, batch);
-
-
 
         debugRenderer = new Box2DDebugRenderer();
         debugShapeRenderer = new ShapeRenderer();
@@ -78,10 +73,12 @@ public class Renderer implements Disposable {
             entity.render(batch);
         }
 
+        //batch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_SRC_ALPHA);
         batch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_SRC_ALPHA);
 
         hero.drawLamp(batch);
         batch.setBlendFunction(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
+        //batch.setBlendFunction(GL20.GL_BLEND_SRC_RGB,GL20.GL_ONE_MINUS_SRC_ALPHA);
         hero.draw(batch);
 
         /*
@@ -95,6 +92,7 @@ public class Renderer implements Disposable {
         batch.end();
         hud.draw();
         //debugRenderings();
+        //camera.zoom = 15;
     }
 
 
@@ -110,20 +108,6 @@ public class Renderer implements Disposable {
         Vector3 cameraPos = model.getCamera().position;
         debugShapeRenderer.setColor(1,0,0,1);
         debugShapeRenderer.point(cameraPos.x, cameraPos.y, 0);
-/*
-        Vector2 heroSpritePos = new Vector2( model.getHero().getSprite().getX(),model.getHero().getSprite().getY());
-        debugShapeRenderer.setColor(0,0,1,1);
-        debugShapeRenderer.point(heroSpritePos.x, heroSpritePos.y, 0);
-
-        Vector2 lampPos = model.getHero().getLampPosition();
-        debugShapeRenderer.setColor(0, 1, 1, 1);
-        debugShapeRenderer.point(lampPos.x, lampPos.y, 0);
-
-        Vector2 rotationPoint =  new Vector2( model.getHero().getSprite().getOriginX(),model.getHero().getSprite().getOriginY());
-        debugShapeRenderer.setColor(1,0 , 1, 1);
-        rotationPoint.add(heroSpritePos);
-        debugShapeRenderer.point(rotationPoint.x, rotationPoint.y, 0);
-*/
         debugShapeRenderer.end();
 
         debugShapeRenderer.setColor(0,0,1,1);
@@ -132,9 +116,7 @@ public class Renderer implements Disposable {
 
         debugShapeRenderer.end();
     }
-
-
-
+    
 
     @Override
     public void dispose() {

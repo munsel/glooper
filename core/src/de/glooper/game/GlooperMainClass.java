@@ -22,6 +22,12 @@ public class GlooperMainClass extends Game {
 	private GameScreen gameScreen;
 	private SplashScreen splashScreen;
 
+	/**
+	 * a PurchaseHandler for cross-platform
+	 * in-app purchases
+	 */
+
+
 	public void create () {
 		Gdx.graphics.setDisplayMode(800, 480, false);
 		AssetManager assetManager = new AssetManager();

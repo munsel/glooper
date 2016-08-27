@@ -50,8 +50,8 @@ public class SaveState  {
         frames = 0;
         score = 0;
         heroRot = 0;
-        heroX = WorldTile.TILE_SIZE/5;
-        heroY = WorldTile.TILE_SIZE/4;
+        heroX = WorldTile.TILE_SIZE/3;
+        heroY = WorldTile.TILE_SIZE/3;
         heroStamina = 1;
         cameraData.x = heroX;
         cameraData.y = heroY;

@@ -70,6 +70,11 @@ public class Entity implements IEntity {
     }
 
     @Override
+    public boolean isUsed() {
+        return !needsToBeRendered;
+    }
+
+    @Override
     public void update(float delta) {
             stateTime+= delta;
         if (needsToBeRendered) {
