@@ -8,6 +8,7 @@ public class ScoreEntry {
     public int place;
     public String country;
     public String playerName;
+    public int items;
     public int score;
 
     @Override

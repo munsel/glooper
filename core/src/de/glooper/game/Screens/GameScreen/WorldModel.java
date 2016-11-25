@@ -77,7 +77,8 @@ public class WorldModel implements Safeable, Disposable {
         if (!screen.isPaused() && !gameOver) {
             hero.update(delta);
             world.step(1.f / 60.f, 5, 5);
-          //  dynamicTileWorld.update(delta);
+            //world.step(delta, 5, 5);
+//            dynamicTileWorld.update(delta);
             cameraHelper.update(delta);
             for (IEntity entity:entities)entity.update(delta);
             //hud.update(delta, saveState.addToScore(1));//+1 every frame

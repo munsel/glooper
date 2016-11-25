@@ -16,27 +16,29 @@ import de.glooper.game.model.Heros.Hero;
 public class SimpleStatusDrawer extends Actor{
 
     private Hero hero;
-    private TextureRegion texture;
+    private TextureRegion texture, textureBg;
     private float maxWidth;
+    private float statusbarWidth;
 
     public SimpleStatusDrawer(Hero hero, Skin skin){
         this.hero = hero;
-        Pixmap pixmap = new Pixmap(1,1, Pixmap.Format.RGB888);
-        pixmap.setColor(Color.WHITE);
-        texture = skin.getRegion("default-round");
-        maxWidth = texture.getRegionWidth()*10;
-        setHeight(15);
+        texture = skin.getRegion("life");
+        textureBg = skin.getRegion("life_bg");
+        maxWidth = 300;
+        setWidth(maxWidth);
+        setHeight(30);
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        batch.draw(texture, getX(), getY(), getWidth(), getHeight());
+        batch.draw(texture, getX()+maxWidth-statusbarWidth, getY(), statusbarWidth, getHeight());
+        batch.draw(textureBg, getX(), getY(), getWidth(), getHeight()       );
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
-        setWidth(hero.getStamina()*maxWidth);
+        statusbarWidth=(hero.getStamina()*maxWidth);
     }
 }

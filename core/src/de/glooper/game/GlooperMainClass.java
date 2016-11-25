@@ -29,7 +29,7 @@ public class GlooperMainClass extends Game {
 
 
 	public void create () {
-		Gdx.graphics.setDisplayMode(800, 480, false);
+		Gdx.graphics.setWindowedMode(1280, 720);
 		AssetManager assetManager = new AssetManager();
 		AssetHandler.instance.startInit(assetManager);
 		//setScreen(new GameScreen(this));

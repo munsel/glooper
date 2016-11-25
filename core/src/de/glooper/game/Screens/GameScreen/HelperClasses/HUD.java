@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import de.glooper.game.ScoreBoardManagement.ScoreBoardLoader;
@@ -30,6 +32,9 @@ public class HUD  extends Stage{
 
 
     private Table gameOverMenu;
+
+    private Table ScoreMenu;
+
     private Label gameOverLabel;
     private Label gameOverMessageLabel;
     private Label finalScorelabel;
@@ -40,8 +45,6 @@ public class HUD  extends Stage{
 
     private List<ScoreEntry> scoreEntryList;
 
-
-    private Button pauseButton;
     private Skin skin;
 
     public HUD(final GameScreen screen, Hero hero){
@@ -61,7 +64,7 @@ public class HUD  extends Stage{
         pauseButtonStyle.imageDown = pauseButtonImageSkin.getDrawable("pause_down");
         */
 
-        pauseButton = new TextButton("pause", skin);
+        Button pauseButton = new Button(skin, "pausebutton");
         table.add(pauseButton).top().expand().pad(0.5f).left();
         pauseButton.addListener(new ClickListener(){
 
@@ -83,7 +86,7 @@ public class HUD  extends Stage{
         );*/
 
         statusDrawer = new SimpleStatusDrawer(hero, skin);
-        table.add(statusDrawer).right();
+        table.add(statusDrawer).right().top();
 
         scoreLabel = new Label(scoreString, skin);
 
@@ -143,24 +146,28 @@ public class HUD  extends Stage{
         gameOverMenu.row();
         gameOverMenu.add(newGameButton).left();
         gameOverMenu.add(backToParentButton).right();
+        //gameOverMenu.addAction(Actions.alpha(0));
         gameOverMenu.setVisible(false);
 
-        table.add(gameOverMenu).expand().fillY().center();
+
+
 
         this.addActor(table);
-
-
     }
 
     public void gameOver(int finalScore){
         String finalScoreString = Integer.toString(finalScore);
         finalScorelabel.setText("final score: "+ finalScoreString);
         gameOverMenu.setVisible(true);
+        //gameOverMenu.addAction(Actions.alpha(1, 2, Interpolation.fade));
+        table.add(gameOverMenu).expand().fillY().center();
     }
 
 
     public void restart(){
-        gameOverMenu.setVisible(false);
+        //gameOverMenu.addAction(Actions.hide());
+        //gameOverMenu.setVisible(false);
+        table.removeActor(gameOverMenu);
     }
 
     public void update(float delta, int score){

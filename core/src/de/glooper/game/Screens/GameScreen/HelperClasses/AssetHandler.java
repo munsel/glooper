@@ -6,26 +6,22 @@ import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.ATextureAsset;
-import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.SimpleTiles.TileAsset;
-import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.SimpleTiles.XCross;
 import de.glooper.game.Screens.GameScreen.HelperClasses.Assets.Heros.Glooper;
 import de.glooper.game.model.TileSets.ITileSet;
-import de.glooper.game.model.TileSets.StarterTiles;
+
 
 import java.util.HashMap;
-import java.util.stream.Stream;
+
 
 
 /**
@@ -41,6 +37,10 @@ public class AssetHandler implements Disposable, AssetErrorListener {
      * It loads and frees the corresponding Asset in runtime
      * this is a critical part of our App, because it handles
      * all the stuff that drains the memory!
+     */
+
+    /**
+     * NONONONONO it just loads once all the stuff to shut up the GC!
      */
 
     public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
@@ -172,6 +172,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
     private Skin initSkin(){
         Skin skin = new Skin();
         skin.addRegions(new TextureAtlas(Gdx.files.internal("uiskin.atlas")));
+        skin.addRegions(new TextureAtlas(Gdx.files.internal("glooperSkin.atlas")));
         int[] fontsizes = {24, 36};
         BitmapFont[] fonts = getFonts("Roboto-Regular.ttf", fontsizes);
         skin.add("fontawesome-24", fonts[0]);
