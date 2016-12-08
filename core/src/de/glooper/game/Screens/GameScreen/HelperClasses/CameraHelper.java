@@ -110,12 +110,6 @@ public class CameraHelper implements Safeable{
         //result.x = 0;
         result.x = (-heroLookingAt.x)*CAMERA_OFFSET;
 
-        integral.x += (-heroLookingAt.x)*integralFactor;
-        integral.y += (-heroLookingAt.y)*integralFactor;
-        if (integral.x>CAMERA_OFFSET) integral.x = CAMERA_OFFSET;
-        if (integral.x<-CAMERA_OFFSET) integral.x = -CAMERA_OFFSET;
-        if (integral.y>CAMERA_OFFSET) integral.y = CAMERA_OFFSET;
-        if (integral.y<-CAMERA_OFFSET) integral.y = -CAMERA_OFFSET;
         return result;
     }
 
@@ -124,20 +118,19 @@ public class CameraHelper implements Safeable{
         //tweenManager.update(delta);
 
         Vector2 actualCameraPos = new Vector2(camera.position.x,camera.position.y);
+        initFocusPoint.set(getCameraFocusPosition());
         Vector2 desiredCameraPos =  actualCameraPos.add(initFocusPoint  );
         //desiredCameraPos = lerp(desiredCameraPos, actualCameraPos, delta);
-        initFocusPoint.set(getCameraFocusPosition());
         stateTime += delta;
         if (stateTime > 1){
             stateTime = 0;
-
         }
         /**
          * camera following heroPos
          */
 
         Vector2 lerpTempy =
-            lerp(model.getHero().getPosition(),desiredCameraPos,delta);
+            lerp(model.getHero().getPosition(),desiredCameraPos,1f/60f);//delta);
 
         camera.position.x = camera.position.x+lerpTempy.x;
         camera.position.y = camera.position.y+lerpTempy.y;

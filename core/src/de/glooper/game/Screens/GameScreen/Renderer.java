@@ -210,7 +210,7 @@ public class Renderer implements Disposable {
         batch.begin();
 
         tiledMapRenderer.renderTileLayer((TiledMapTileLayer) model.getMap().getLayers().get("normals"));
-        hero.drawNormal(batch);
+        //hero.drawNormal(batch);
         batch.end();
         normalsBuffer.end();
 
@@ -232,11 +232,6 @@ public class Renderer implements Disposable {
         //tiledMapRenderer.render();
 
         //batch.begin();
-        for (IEntity entity: model.getEntities()){
-            entity.render(batch);
-        }
-
-
 
         /*
         	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
@@ -266,6 +261,12 @@ shader.begin();
 shader.end();
         //Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
         batch.begin();
+
+
+        batch.setProjectionMatrix(camera.combined);
+        model.getClouds().draw(batch);
+        batch.setProjectionMatrix(frameCam.combined);
+
         batch.setShader(shader);
         normalsTexture = normalsBuffer.getColorBufferTexture();
         //Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
@@ -281,6 +282,9 @@ shader.end();
         //batch.draw(diffuseTexture, 0 - camera.viewportWidth/2,0-camera.viewportHeight/2);
         batch.setShader(null);
         batch.setProjectionMatrix(camera.combined);
+        for (IEntity entity: model.getEntities()){
+            entity.render(batch);
+        }
         hero.draw(batch);
         batch.end();
 

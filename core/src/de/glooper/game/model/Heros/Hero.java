@@ -6,12 +6,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
 import de.glooper.game.SaveStateManagement.Safeable;
 import de.glooper.game.SaveStateManagement.SaveState;
+import de.glooper.game.Screens.GameScreen.HelperClasses.AssetHandler;
 import de.glooper.game.Screens.GameScreen.WorldModel;
 import de.glooper.game.model.Entities.Entity;
 import de.glooper.game.model.Physics.Box2DCategoryBits;
@@ -31,7 +33,8 @@ public class Hero implements IHero, Safeable, Disposable {
     private static final float density = 1;
     private static final float friction = 1;
     private static final float restitution = 0;
-    private static final float radius = 0.24f;
+    //private static final float radius = 0.24f;
+    private static final float radius = 0.22f;
 
     /**
      * variables
@@ -73,6 +76,8 @@ public class Hero implements IHero, Safeable, Disposable {
      * Sprite stuff
      */
     private Sprite sprite;
+    private Texture spritesheet;
+    private TextureRegion[] spriteFrames;
     private Sprite normalSprite;
     private final float offsetSpriteX = 0.6f;
     private final float offsetSpriteY = 0.24f;
@@ -157,14 +162,28 @@ public class Hero implements IHero, Safeable, Disposable {
         //lampSprite.setSize(2*lightDistance, 2*lightDistance);
 
 
+        int XDivisions = 4;
+        int YDivisions = 8;
+        int numSprites = 32;
+        spritesheet = AssetHandler.instance.glooper;
+        TextureRegion[][] regions = TextureRegion.split(spritesheet,128, 78);
+        spriteFrames = new TextureRegion[numSprites];
+        int index=0;
+        for (int i=0; i<YDivisions;i++){
+            for (int j=0; j< XDivisions; j++){
+                spriteFrames[index++]=regions[i][j];
+            }
+        }
         Texture texture = new Texture(heroName + ".png");
         Texture textureNormals = new Texture(heroName + "normal.png");
 
+
         sprite = new Sprite(texture);
+        animation = new Animation(1.f/15.f, spriteFrames);
         sprite.setSize(SIZE_X, SIZE_Y);
         sprite.setOrigin(offsetSpriteX, offsetSpriteY);
 
-        normalSprite = new Sprite(texture);
+        normalSprite = new Sprite(textureNormals);
         normalSprite.setSize(SIZE_X, SIZE_Y);
         normalSprite.setOrigin(offsetSpriteX, offsetSpriteY);
 
@@ -280,6 +299,7 @@ public class Hero implements IHero, Safeable, Disposable {
         }
         body.setLinearVelocity(velocity2D);
 
+        sprite.setRegion(animation.getKeyFrame(frames/80f, true));
         alignSpriteToBody();
         //Vector2 lampPos = getLampPosition();
         //lampSprite.setPosition(lampPos.x, lampPos.y);

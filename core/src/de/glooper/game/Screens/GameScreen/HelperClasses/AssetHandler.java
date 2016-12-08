@@ -64,6 +64,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
     public HashMap<String, ATextureAsset> tileAssets;
     public TextureRegion[] clouds;
 
+    public Texture glooper;
     public TextureAtlas seaweed;
     public TextureAtlas eel;
 
@@ -112,7 +113,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
             assetManager.load(directoryName+ starterTileSetNames[i]+".png", Texture.class);
         }
         */
-
+        assetManager.load("Heros/glooper/spritesheet.png", Texture.class);
         assetManager.load("Backgrounds/clouds.atlas", TextureAtlas.class);
         assetManager.load("Entities/seaweed.pack", TextureAtlas.class);
         assetManager.load("Entities/eel.atlas", TextureAtlas.class);
@@ -141,8 +142,8 @@ public class AssetHandler implements Disposable, AssetErrorListener {
             Texture tileTexture = assetManager.get(directoryName+starterTileSetNames[i]+".png", Texture.class);
             tileAssets.put(starterTileSetNames[i], new TileAsset(tileTexture));
         }*/
-        TextureAtlas glooperAtlas = assetManager.get("Heros/glooper.pack");
-        glooperAsset = new Glooper(glooperAtlas);
+        //TextureAtlas glooperAtlas = assetManager.get("Heros/glooper.pack");
+        //glooperAsset = new Glooper(glooperAtlas);
 
         TextureAtlas cloudsAtlas = assetManager.get("Backgrounds/clouds.atlas");
         clouds = new TextureRegion[6];
@@ -150,6 +151,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
             clouds[i] = cloudsAtlas.findRegion("cloud"+Integer.toString(i+1));
         }
 
+        glooper = assetManager.get("Heros/glooper/spritesheet.png");
         seaweed = assetManager.get("Entities/seaweed.pack");
         eel = assetManager.get("Entities/eel.atlas");
 
@@ -158,16 +160,6 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         skin = initSkin();
     }
 
-    public void loadNewTile(String tileDescriptor ){
-        assetManager.load(tileDescriptor, Texture.class);
-        //assetManager.finishLoading();
-
-    }
-
-    public void unloadOldTile ( String tileDescriptor){
-        assetManager.unload(tileDescriptor);
-
-    }
 
     private Skin initSkin(){
         Skin skin = new Skin();
