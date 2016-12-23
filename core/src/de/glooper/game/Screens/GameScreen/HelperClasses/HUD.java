@@ -1,15 +1,11 @@
 package de.glooper.game.Screens.GameScreen.HelperClasses;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.*;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import de.glooper.game.ScoreBoardManagement.ScoreBoardLoader;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import de.glooper.game.ScoreBoardManagement.ScoreEntry;
 import de.glooper.game.Screens.GameScreen.GameScreen;
 import de.glooper.game.model.Heros.Hero;
@@ -20,30 +16,25 @@ import de.glooper.game.model.Heros.Hero;
  * and also a label, that displays the current score
  */
 public class HUD  extends Stage{
+    private final static String TAG = HUD.class.getSimpleName();
+
+    private final float FADE_INTERVAL = 0.5f;
 
     private GameScreen screen;
     private Hero hero;
 
     private Table table;
-    private String scoreString;
-    private String playerName;
     private SimpleStatusDrawer statusDrawer;
-    private Label scoreLabel;
 
-
-    private Table gameOverMenu;
-
-    private Table ScoreMenu;
-
-    private Label gameOverLabel;
-    private Label gameOverMessageLabel;
-    private Label finalScorelabel;
-    private Button submitScoreButton;
+    private Table overlayMenuTable;
+    private Label overlayHeader;
+    private Button pauseButton;
+    private TextButton actionButton;
     private Button backToParentButton;
-    private Button newGameButton;
-    private TextField playerNameTextField;
+    private ClickListener pauseListener;
+    private ClickListener restartListener;
+    private ClickListener resumeListener;
 
-    private List<ScoreEntry> scoreEntryList;
 
     private Skin skin;
 
@@ -56,123 +47,100 @@ public class HUD  extends Stage{
         table.pad(7f);
         skin = AssetHandler.instance.skin;
 
-        /*
-        TextureAtlas pauseButtonAtlas = new TextureAtlas("HUD/pauseButton.atlas");
-        Skin pauseButtonImageSkin = new Skin(pauseButtonAtlas);
-        ImageButton.ImageButtonStyle pauseButtonStyle = new ImageButton.ImageButtonStyle();
-        pauseButtonStyle.imageUp = pauseButtonImageSkin.getDrawable("pause_up");
-        pauseButtonStyle.imageDown = pauseButtonImageSkin.getDrawable("pause_down");
-        */
-
-        Button pauseButton = new Button(skin, "pausebutton");
-        table.add(pauseButton).top().expand().pad(0.5f).left();
-        pauseButton.addListener(new ClickListener(){
-
+        pauseListener = new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (HUD.this.screen.isPaused())
-                    HUD.this.screen.resume();
-                else
-                    HUD.this.screen.pause();
+                screen.pause();
+                pauseButton.setVisible(false);
+                overlayHeader.setText("paused");
+                actionButton.clearListeners();
+                actionButton.setText("resume");
+                actionButton.addListener(resumeListener);
+                overlayMenuTable.setVisible(true);
+                overlayMenuTable.addAction(Actions.sequence(Actions.alpha(0),Actions.alpha(1,FADE_INTERVAL)));
             }
-        });
-
-        scoreString = "0";
-        /*
-        Label.LabelStyle scoreLabelStyle = new Label.LabelStyle();
-        scoreLabelStyle.font = new BitmapFont(
-                Gdx.files.internal("HUD/scoreFont.fnt"),
-                Gdx.files.internal("HUD/scoreFont.png"), false
-        );*/
-
-        statusDrawer = new SimpleStatusDrawer(hero, skin);
-        table.add(statusDrawer).right().top();
-
-        scoreLabel = new Label(scoreString, skin);
-
-        table.add(scoreLabel).top().right().pad(0.5f);
-        table.row();
-        table.setTouchable(Touchable.enabled);
-
-        gameOverMenu = new Table();
-
-        gameOverLabel = new Label("Game Over!", skin);
-        gameOverMessageLabel = new Label("you failed ):", skin);
-
-        playerNameTextField = new TextField("bogus name", skin);
-
-
-        submitScoreButton = new TextButton("submit score", skin);
-        submitScoreButton.addListener(new ClickListener(){
+        } ;
+        resumeListener = new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                playerName = playerNameTextField.getText();
-                Gdx.app.log("submit score", "{score: "+scoreString+", name: "+playerName+"}");
+                overlayMenuTable.setVisible(false);
+                pauseButton.setVisible(true);
+                screen.resume();
             }
-        });
-
-        scoreEntryList = new List<ScoreEntry>(skin, "scoreboard");
-        scoreEntryList.setItems(ScoreBoardLoader.getScoreEntries(1));
-        ScrollPane scoreBoardListScroller = new ScrollPane(scoreEntryList);
-
-
-        newGameButton = new TextButton("restart", skin);
-        newGameButton.addListener(new ClickListener(){
+        };
+        restartListener = new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                overlayMenuTable.setVisible(false);
+                pauseButton.setVisible(true);
                 screen.show();
             }
-        });
+        };
 
-        backToParentButton = new TextButton("back", skin);
+        pauseButton = new Button(skin, "pausebutton");
+        pauseButton.addListener(pauseListener);
+
+        statusDrawer = new SimpleStatusDrawer(hero, skin);
+        table.setTouchable(Touchable.enabled);
+
+
+        overlayMenuTable = new Table(skin);
+        overlayMenuTable.setBackground(new TextureRegionDrawable(
+                skin.getRegion("pausebg")));
+
+
+        overlayHeader = new Label("paused", skin,"hud-headline");
+
+        actionButton = new TextButton("restart", skin, "hud");
+        actionButton.addListener(resumeListener);
+
+        backToParentButton = new TextButton("back to menu", skin, "hud");
         backToParentButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 screen.backToMenu();
             }
         });
-        finalScorelabel = new Label("final Score:##234", skin);
-        gameOverMenu.add(gameOverLabel);
-        gameOverMenu.row();
-        gameOverMenu.add(gameOverMessageLabel);
-        gameOverMenu.row();
-        gameOverMenu.add(finalScorelabel);
-        gameOverMenu.row();
-        gameOverMenu.add(playerNameTextField).center().expandX().fillX();
-        gameOverMenu.row();
-        gameOverMenu.add(scoreBoardListScroller);
-        gameOverMenu.row();
-        gameOverMenu.add(submitScoreButton).right();
-        gameOverMenu.row();
-        gameOverMenu.add(newGameButton).left();
-        gameOverMenu.add(backToParentButton).right();
-        //gameOverMenu.addAction(Actions.alpha(0));
-        gameOverMenu.setVisible(false);
 
+        overlayMenuTable.add(overlayHeader).center().top().padBottom(48);
+        overlayMenuTable.row();
+        overlayMenuTable.add(actionButton).center().padBottom(30);
+        overlayMenuTable.row();
+        overlayMenuTable.add(backToParentButton).center();
 
-
+        table.add(pauseButton).top().pad(0.5f).left();
+        table.add(statusDrawer).expandX().right().top();
+        table.row();
+        table.add(overlayMenuTable).colspan(2).expand().center();
+        overlayMenuTable.setVisible(false);
 
         this.addActor(table);
     }
 
     public void gameOver(int finalScore){
-        String finalScoreString = Integer.toString(finalScore);
-        finalScorelabel.setText("final score: "+ finalScoreString);
-        gameOverMenu.setVisible(true);
-        //gameOverMenu.addAction(Actions.alpha(1, 2, Interpolation.fade));
-        table.add(gameOverMenu).expand().fillY().center();
+        Gdx.app.log(TAG,"gameOver() called!");
+        pauseButton.setVisible(false);
+        statusDrawer.setVisible(false);
+        overlayHeader.setText("game over");
+        actionButton.clearListeners();
+        actionButton.setText("restart");
+        actionButton.addListener(restartListener);
+        overlayMenuTable.setVisible(true);
+        overlayMenuTable.addAction(Actions.alpha(0));
+        overlayMenuTable.addAction(Actions.alpha(1,1));
+        //overlayMenuTable.addAction(Actions.sequence(Actions.alpha(0),Actions.alpha(1,1.5f)));
     }
 
 
     public void restart(){
         //gameOverMenu.addAction(Actions.hide());
-        //gameOverMenu.setVisible(false);
-        table.removeActor(gameOverMenu);
+        pauseButton.setVisible(true);
+        statusDrawer.setVisible(true);
+        overlayMenuTable.setVisible(false);
+
     }
 
     public void update(float delta, int score){
-        scoreString = Integer.toString(score);
-        scoreLabel.setText(scoreString);
         this.act(delta);
     }
 }

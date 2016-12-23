@@ -34,7 +34,7 @@ public class Hero implements IHero, Safeable, Disposable {
     private static final float friction = 1;
     private static final float restitution = 0;
     //private static final float radius = 0.24f;
-    private static final float radius = 0.22f;
+    private static final float radius = 0.20f;
 
     /**
      * variables
@@ -162,8 +162,8 @@ public class Hero implements IHero, Safeable, Disposable {
         //lampSprite.setSize(2*lightDistance, 2*lightDistance);
 
 
-        int XDivisions = 4;
-        int YDivisions = 8;
+        int XDivisions = 8;
+        int YDivisions = 4;
         int numSprites = 32;
         spritesheet = AssetHandler.instance.glooper;
         TextureRegion[][] regions = TextureRegion.split(spritesheet,128, 78);
@@ -179,7 +179,7 @@ public class Hero implements IHero, Safeable, Disposable {
 
 
         sprite = new Sprite(texture);
-        animation = new Animation(1.f/15.f, spriteFrames);
+        animation = new Animation(1.f/25.f, spriteFrames);
         sprite.setSize(SIZE_X, SIZE_Y);
         sprite.setOrigin(offsetSpriteX, offsetSpriteY);
 

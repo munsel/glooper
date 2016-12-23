@@ -67,6 +67,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
     public Texture glooper;
     public TextureAtlas seaweed;
     public TextureAtlas eel;
+    public Texture goomba;
 
     public ITileSet starterTiles;
 
@@ -117,6 +118,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         assetManager.load("Backgrounds/clouds.atlas", TextureAtlas.class);
         assetManager.load("Entities/seaweed.pack", TextureAtlas.class);
         assetManager.load("Entities/eel.atlas", TextureAtlas.class);
+        assetManager.load("Entities/goomba.png", Texture.class);
         /**
          * but now we must direct the corresponding
          * Textures handled by the assetManager
@@ -154,6 +156,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         glooper = assetManager.get("Heros/glooper/spritesheet.png");
         seaweed = assetManager.get("Entities/seaweed.pack");
         eel = assetManager.get("Entities/eel.atlas");
+        goomba = assetManager.get("Entities/goomba.png");
 
         map = assetManager.get("WorldTiles/rocks256/rocks.tmx");
 
@@ -165,10 +168,12 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         Skin skin = new Skin();
         skin.addRegions(new TextureAtlas(Gdx.files.internal("uiskin.atlas")));
         skin.addRegions(new TextureAtlas(Gdx.files.internal("glooperSkin.atlas")));
-        int[] fontsizes = {24, 36};
-        BitmapFont[] fonts = getFonts("Roboto-Regular.ttf", fontsizes);
+        int[] fontsizes = {24, 66, 132};
+        BitmapFont[] fonts = getFonts("yucatan.ttf", fontsizes);
+        Gdx.app.log(TAG, Integer.toString(fonts.length));
         skin.add("fontawesome-24", fonts[0]);
-        skin.add("fontawesome-36", fonts[1]);
+        skin.add("themefont-small", fonts[1]);
+        skin.add("themefont-large", fonts[2]);
         skin.load(Gdx.files.internal("uiskin.json"));
         return skin;
     }
@@ -188,7 +193,7 @@ public class AssetHandler implements Disposable, AssetErrorListener {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =
                 new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.characters = FONT_CHARACTERS;
-        BitmapFont[] fonts = new BitmapFont[2];
+        BitmapFont[] fonts = new BitmapFont[sizes.length];
         for ( int i = 0 ; i < sizes.length ; i++){
             parameter.size = sizes[i];
             fonts[i]=generator.generateFont(parameter);

@@ -61,8 +61,8 @@ public class WorldModel implements Safeable, Disposable {
         world = new World(new Vector2(0,0), false);
         map = AssetHandler.instance.map;
         entities = new Array<IEntity>();
-        TileObjectUtil.parseTiledObjectLayer(world,entities,map.getLayers().get("collision").getObjects());
         hero = new Glooper(world, camera, this);
+        TileObjectUtil.parseTiledObjectLayer(world,entities,map.getLayers().get("collision").getObjects(),hero);
         //dynamicTileWorld = DynamicTileWorld.getInstance(world, hero,camera, saveState);
 
         hud = new HUD(this.screen, hero);
@@ -82,9 +82,9 @@ public class WorldModel implements Safeable, Disposable {
             cameraHelper.update(delta);
             for (IEntity entity:entities)entity.update(delta);
             //hud.update(delta, saveState.addToScore(1));//+1 every frame
-            hud.update(delta, saveState.getScore());//only score
             clouds.update(delta);
         }
+        hud.update(delta, saveState.getScore());//only score
     }
 
     public void init(){

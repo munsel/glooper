@@ -1,10 +1,11 @@
 package de.glooper.game.model.Entities;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureArray;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import de.glooper.game.Screens.GameScreen.HelperClasses.AssetHandler;
 import de.glooper.game.model.Tile.IWorldTile;
 import de.glooper.game.model.Tile.WorldTile;
 
@@ -32,6 +33,7 @@ public class Entity implements IEntity {
     private short categoryBits;
     private Animation animation;
     private IEntityBehaviour behaviour;
+    private Sprite sprite;
 
     private World world;
     private Body body;
@@ -39,7 +41,45 @@ public class Entity implements IEntity {
     Array<IEntity> container;
 
 
-    public Entity(Array<IEntity> container,World world, TextureAtlas atlas, String name,
+    public Entity(Array<IEntity> container,World world,
+                  TextureAtlas atlas, String name,
+                  float x, float y,
+                  float width, float height,
+                  short categoryBits){
+        this(container, world, new Animation(.15f, atlas.getRegions()),
+                name, x,y,width,height,categoryBits);
+    }
+
+    public Entity(Array<IEntity> container, World world,
+                  TextureRegion[] regions, String name,
+                  float x, float y,
+                  float width, float height,
+                  short categoryBits){
+        this(container, world, new Animation(.05f, regions),
+                name, x,y,width,height,categoryBits);
+    }
+
+    public static TextureRegion[] getFramesFromSpritesheet(int nSprites,
+                                                           int columns, int rows,
+                                                           int width, int height,
+                                                           Texture spritesheet){
+        //int columns = 8;
+        //int rows = 4;
+        //int nSprites = 32;
+        TextureRegion[][] regions = TextureRegion.split(spritesheet,width, height);
+        TextureRegion[] spriteFrames = new TextureRegion[nSprites];
+        int index=0;
+        for (int i=0; i<rows;i++){
+            for (int j=0; j< columns; j++){
+                spriteFrames[index++]=regions[i][j];
+            }
+        }
+        return spriteFrames;
+    }
+
+
+    public Entity(Array<IEntity> container,World world,
+                  Animation animation, String name,
                   float x, float y,
                   float width, float height,
                   short categoryBits){
@@ -51,8 +91,13 @@ public class Entity implements IEntity {
         this.name = name;
         this.world = world;
         this.categoryBits = categoryBits;
-        animation = new Animation(.15f, atlas.getRegions());
-        animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+        this.animation = animation;
+        sprite = new Sprite();
+        sprite.setSize(width, height);
+        sprite.setOrigin( width/2, height/2);
+
+        animation.setPlayMode(Animation.PlayMode.LOOP);
+        //animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         //reset();
     }
 
@@ -79,7 +124,7 @@ public class Entity implements IEntity {
             stateTime+= delta;
         if (needsToBeRendered) {
             behaviour.update(delta);
-            body.setTransform(x + width * .5f, y + height * .5f, 0);
+            //body.setTransform(x + width * .5f, y + height * .5f, 0);
             if ((!animation.getKeyFrame(stateTime).isFlipX() && flipX)
                     || (animation.getKeyFrame(stateTime).isFlipX() && !flipX))
                 animation.getKeyFrame(stateTime).flip(true, false);
@@ -95,8 +140,11 @@ public class Entity implements IEntity {
     @Override
     public void render(SpriteBatch batch) {
         if (needsToBeRendered)
-            batch.draw(animation.getKeyFrame(stateTime)
-                , x, y, width, height);
+            sprite.setRegion(animation.getKeyFrame(stateTime));
+            sprite.draw(batch);
+
+            //batch.draw(animation.getKeyFrame(stateTime)
+              //  , x, y, width, height);
     }
 
     @Override
@@ -138,6 +186,16 @@ public class Entity implements IEntity {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Body getBody() {
+        return body;
+    }
+
+    @Override
+    public Sprite getSprite() {
+        return sprite;
     }
 
     @Override

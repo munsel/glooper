@@ -19,21 +19,26 @@ public class SimpleStatusDrawer extends Actor{
     private TextureRegion texture, textureBg;
     private float maxWidth;
     private float statusbarWidth;
+    private float alpha;
 
     public SimpleStatusDrawer(Hero hero, Skin skin){
         this.hero = hero;
         texture = skin.getRegion("life");
         textureBg = skin.getRegion("life_bg");
         maxWidth = 300;
+        alpha = 1;
         setWidth(maxWidth);
         setHeight(30);
     }
 
+    public void setAlpha(float alpha){
+        this.alpha = alpha;
+    }
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
+        super.draw(batch, parentAlpha*alpha);
         batch.draw(texture, getX()+maxWidth-statusbarWidth, getY(), statusbarWidth, getHeight());
-        batch.draw(textureBg, getX(), getY(), getWidth(), getHeight()       );
+        batch.draw(textureBg, getX(), getY(), getWidth(), getHeight()  );
     }
 
     @Override

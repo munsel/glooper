@@ -38,9 +38,9 @@ public class Clouds implements IBackground {
         cloudsV1 = new Array<Sprite>();
         cloudsV2 = new Array<Sprite>();
         cloudsV3 = new Array<Sprite>();
-        createClouds(cloudsV1, 20);
-        createClouds(cloudsV2,20);
-        createClouds(cloudsV3, 20);
+        createClouds(cloudsV1, 10);
+        createClouds(cloudsV2,10);
+        createClouds(cloudsV3, 10);
     }
     public void init(){
         initializeCloudDistribution(cloudsV1);

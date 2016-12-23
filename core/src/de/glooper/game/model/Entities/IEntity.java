@@ -1,6 +1,8 @@
 package de.glooper.game.model.Entities;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.Body;
 
 /**
  * Created by munsel on 27.06.16.
@@ -22,6 +24,8 @@ public interface IEntity {
     boolean getXFlip();
     boolean getYFlip();
     String getName();
+    Body getBody();
+    Sprite getSprite();
     void removeItself();
     void removeBody();
     void createBody();

@@ -45,9 +45,9 @@ public class Renderer implements Disposable {
     ShaderProgram shader;
 
     //our constants...
-    public static final float DEFAULT_LIGHT_Z = 0.3f;
-    public static final float AMBIENT_INTENSITY = 0.25f;
-    public static final float LIGHT_INTENSITY = 10f;
+    public static final float DEFAULT_LIGHT_Z = 1.3f;
+    public static final float AMBIENT_INTENSITY = 0.15f;
+    public static final float LIGHT_INTENSITY = 16f;
 
     public static final Vector3 LIGHT_POS = new Vector3(0f,0f,DEFAULT_LIGHT_Z);
 
@@ -58,91 +58,14 @@ public class Renderer implements Disposable {
     public static final Vector3 AMBIENT_COLOR = new Vector3(0.6f, 0.7f, 0.8f);
 
     //Attenuation coefficients for light falloff
-    public static final Vector3 FALLOFF = new Vector3(3f, 3f, 2f);
+    public static final Vector3 FALLOFF = new Vector3(.3f, .3f, 3f);
 
-
-    final String VERT =
-            "attribute vec4 "+ShaderProgram.POSITION_ATTRIBUTE+";\n" +
-                    "attribute vec4 "+ShaderProgram.COLOR_ATTRIBUTE+";\n" +
-                    "attribute vec2 "+ShaderProgram.TEXCOORD_ATTRIBUTE+"0;\n" +
-
-                    "uniform mat4 u_projTrans;\n" +
-                    " \n" +
-                    "varying vec4 vColor;\n" +
-                    "varying vec2 vTexCoord;\n" +
-
-                    "void main() {\n" +
-                    "	vColor = "+ShaderProgram.COLOR_ATTRIBUTE+";\n" +
-                   // "	vTexCoord = "+ShaderProgram.TEXCOORD_ATTRIBUTE+"0;\n" +
-                    "   vTexCoord = vec2(a_texCoord0.s, 1.0 - a_texCoord0.t);\n" +
-                    "	gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" +
-                    "}";
-
-    //no changes except for LOWP for color values
-    //we would store this in a file for increased readability
-    final String FRAG =
-            //GL ES specific stuff
-            "#ifdef GL_ES\n" //
-                    + "#define LOWP lowp\n" //
-                    + "precision mediump float;\n" //
-                    + "#else\n" //
-                    + "#define LOWP \n" //
-                    + "#endif\n" + //
-                    "//attributes from vertex shader\n" +
-                    "varying LOWP vec4 vColor;\n" +
-                    "varying vec2 vTexCoord;\n" +
-                    "\n" +
-                    "//our texture samplers\n" +
-                    "uniform sampler2D u_texture;   //diffuse map\n" +
-                    "uniform sampler2D u_normals;   //normal map\n" +
-                    "\n" +
-                    "//values used for shading algorithm...\n" +
-                    "uniform vec2 Resolution;         //resolution of screen\n" +
-                    "uniform vec3 LightPos;           //light position, normalized\n" +
-                    "uniform LOWP vec4 LightColor;    //light RGBA -- alpha is intensity\n" +
-                    "uniform LOWP vec4 AmbientColor;  //ambient RGBA -- alpha is intensity \n" +
-                    "uniform vec3 Falloff;            //attenuation coefficients\n" +
-                    "\n" +
-                    "void main() {\n" +
-                    "	//RGBA of our diffuse color\n" +
-                    "	vec4 DiffuseColor = texture2D(u_texture, vTexCoord);\n" +
-                    "	\n" +
-                    "	//RGB of our normal map\n" +
-                    "	vec3 NormalMap = texture2D(u_normals, vTexCoord).rgb;\n" +
-                    "	\n" +
-                    "	//The delta position of light\n" +
-                    "	vec3 LightDir = vec3(LightPos.xy - (gl_FragCoord.xy / Resolution.xy), LightPos.z);\n" +
-                    "	\n" +
-                    "	//Correct for aspect ratio\n" +
-                    "	LightDir.x *= Resolution.x / Resolution.y;\n" +
-                    "	\n" +
-                    "	//Determine distance (used for attenuation) BEFORE we normalize our LightDir\n" +
-                    "	float D = length(LightDir);\n" +
-                    "	\n" +
-                    "	//normalize our vectors\n" +
-                    "	vec3 N = normalize(NormalMap * 2.0 - 1.0);\n" +
-                    "	vec3 L = normalize(LightDir);\n" +
-                    "	\n" +
-                    "	//Pre-multiply light color with intensity\n" +
-                    "	//Then perform \"N dot L\" to determine our diffuse term\n" +
-                    "	vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);\n" +
-                    "\n" +
-                    "	//pre-multiply ambient color with intensity\n" +
-                    "	vec3 Ambient = AmbientColor.rgb * AmbientColor.a;\n" +
-                    "	\n" +
-                    "	//calculate attenuation\n" +
-                    "	float Attenuation = 1.0 / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );\n" +
-                    "	\n" +
-                    "	//the calculation which brings it all together\n" +
-                    "	vec3 Intensity = Ambient + Diffuse * Attenuation;\n" +
-                    "	vec3 FinalColor = DiffuseColor.rgb * Intensity;\n" +
-                    "	gl_FragColor = vColor * vec4(FinalColor, DiffuseColor.a);\n" +
-                    "}";
 
     public Renderer(WorldModel model ){
         this.model = model;
         this.hero = model.getHero();
         this.hud = model.getHud();
+
 
         camera = model.getCamera();
         frameCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -157,7 +80,10 @@ public class Renderer implements Disposable {
         world = model.getWorld();
 
         ShaderProgram.pedantic = false;
-        shader = new ShaderProgram(VERT, FRAG);
+        String vert = Gdx.files.internal("shaders/vertex.glsl").readString();
+        String frag = Gdx.files.internal("shaders/fragment.glsl").readString();
+        //shader = new ShaderProgram(VERT, FRAG);
+        shader = new ShaderProgram(vert, frag);
         if (!shader.isCompiled())
             throw new GdxRuntimeException("Could not compile shader: "+shader.getLog());
         //print any warnings
@@ -247,7 +173,7 @@ public class Renderer implements Disposable {
         //batch.setProjectionMatrix(frameCam.combined);
         //frameCam.translate(diffuseBuffer.getWidth()/2, diffuseBuffer.getHeight()/2);
         //resultBuffer.begin();
-        Gdx.gl.glClearColor(0,0,0.02f,1);
+        Gdx.gl.glClearColor(0.05f,0.05f,0.12f,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT );
         batch.setProjectionMatrix(frameCam.combined);
 shader.begin();
