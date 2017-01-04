@@ -26,6 +26,7 @@ import de.glooper.game.model.Heros.IHero;
  * Created by munsel on 06.06.15.
  */
 public class Renderer implements Disposable {
+    private final String TAG = Renderer.class.getSimpleName();
 
     private WorldModel model;
     private Box2DDebugRenderer debugRenderer;
@@ -121,6 +122,9 @@ public class Renderer implements Disposable {
     float pad = .4f;
     Vector2 relLampPos = new Vector2();
     public void render(float deltaTime){
+        long start = System.nanoTime();
+
+
         batch.setProjectionMatrix(camera.combined);
         //Gdx.gl.glViewport(0,0,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -234,6 +238,8 @@ shader.end();
         batch.end();
 */
         hud.draw();
+        long elapsedTime = System.nanoTime() - start;
+        Gdx.app.log(TAG,Long.toString(elapsedTime));
         //debugRenderings();
         //camera.zoom = 15;
     }
