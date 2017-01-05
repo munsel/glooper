@@ -98,7 +98,7 @@ public class Entity implements IEntity {
 
         animation.setPlayMode(Animation.PlayMode.LOOP);
         //animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
-        //reset();
+        reset();
     }
 
     @Override
@@ -212,6 +212,7 @@ public class Entity implements IEntity {
 
     @Override
     public void createBody() {
+        if (body !=null ) removeBody();
         BodyDef bdef = new BodyDef();
         bdef.position.set(x+width*.5f, y+height*.5f);
         //bdef.type = BodyDef.BodyType.StaticBody;

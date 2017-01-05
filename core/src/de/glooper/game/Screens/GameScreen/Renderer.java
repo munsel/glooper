@@ -46,9 +46,9 @@ public class Renderer implements Disposable {
     ShaderProgram shader;
 
     //our constants...
-    public static final float DEFAULT_LIGHT_Z = 1.3f;
-    public static final float AMBIENT_INTENSITY = 0.15f;
-    public static final float LIGHT_INTENSITY = 16f;
+    public static final float DEFAULT_LIGHT_Z = 1.2f;
+    public static final float AMBIENT_INTENSITY = 0.1f;
+    public static final float LIGHT_INTENSITY = 14f;
 
     public static final Vector3 LIGHT_POS = new Vector3(0f,0f,DEFAULT_LIGHT_Z);
 
@@ -66,7 +66,6 @@ public class Renderer implements Disposable {
         this.model = model;
         this.hero = model.getHero();
         this.hud = model.getHud();
-
 
         camera = model.getCamera();
         frameCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -88,15 +87,16 @@ public class Renderer implements Disposable {
         if (!shader.isCompiled())
             throw new GdxRuntimeException("Could not compile shader: "+shader.getLog());
         //print any warnings
-        if (shader.getLog().length()!=0)
+       /* if (shader.getLog().length()!=0)
             System.out.println(shader.getLog());
-
+*/
         LIGHT_POS.z = DEFAULT_LIGHT_Z;
         //setup default uniforms
         shader.begin();
 
         //our normal map
         shader.setUniformi("u_normals", 1); //GL_TEXTURE1
+        shader.setUniformi("u_texture", 0);
 
         shader.setUniformf("Resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -218,29 +218,10 @@ shader.end();
         hero.draw(batch);
         batch.end();
 
-
-        //resultBuffer.end();
-
-
-/*        batch.setProjectionMatrix(camera.combined);
-
-        //Gdx.gl.glClearColor(0.08f, 0.12f, 0.28f,1);
-        Gdx.gl.glClearColor(1f, 1f, 1f,1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //batch.draw(diffuseTexture,
-        //0,0, diffuseTexture.getWidth()/128, diffuseTexture.getHeight()/128);
-        batch.setShader(null);
-        batch.begin();
-        batch.draw(resultBuffer.getColorBufferTexture(),
-                camera.position.x - camera.viewportWidth / 2, camera.position.y - camera.viewportHeight / 2,
-                diffuseTexture.getWidth() / 128,
-                diffuseTexture.getHeight() / 128);
-        batch.end();
-*/
+        //long elapsedTime = System.nanoTime() - start;
+        //Gdx.app.log(TAG,Long.toString(elapsedTime));
+        debugRenderings();
         hud.draw();
-        long elapsedTime = System.nanoTime() - start;
-        Gdx.app.log(TAG,Long.toString(elapsedTime));
-        //debugRenderings();
         //camera.zoom = 15;
     }
 

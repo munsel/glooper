@@ -1,6 +1,8 @@
 package de.glooper.game.Screens.GameScreen.HelperClasses;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -19,6 +21,8 @@ public class HUD  extends Stage{
     private final static String TAG = HUD.class.getSimpleName();
 
     private final float FADE_INTERVAL = 0.5f;
+
+    private int updateTicks;
 
     private GameScreen screen;
     private Hero hero;
@@ -79,14 +83,25 @@ public class HUD  extends Stage{
 
         pauseButton = new Button(skin, "pausebutton");
         pauseButton.addListener(pauseListener);
+        pauseButton.setClip(true);
+        pauseButton.setOrigin(1);
+        pauseButton.setScale(0.6f);
 
         statusDrawer = new SimpleStatusDrawer(hero, skin);
         table.setTouchable(Touchable.enabled);
 
 
+        TextureRegion overlayBackgroundTexture = skin.getRegion("pausebg");
         overlayMenuTable = new Table(skin);
         overlayMenuTable.setBackground(new TextureRegionDrawable(
-                skin.getRegion("pausebg")));
+                overlayBackgroundTexture));
+        overlayMenuTable.setWidth(overlayBackgroundTexture.getRegionWidth());
+        overlayMenuTable.setHeight(overlayBackgroundTexture.getRegionHeight());
+        overlayMenuTable.setX((this.getWidth()-overlayMenuTable.getWidth())*.5f);
+        overlayMenuTable.setY((this.getHeight()-overlayMenuTable.getHeight())*.5f);
+        overlayMenuTable.setClip(true);
+        overlayMenuTable.setOrigin(overlayMenuTable.getPrefWidth()*.5f, overlayMenuTable.getPrefHeight()*.5f);
+        overlayMenuTable.setVisible(false);
 
 
         overlayHeader = new Label("paused", skin,"hud-headline");
@@ -109,12 +124,13 @@ public class HUD  extends Stage{
         overlayMenuTable.add(backToParentButton).center();
 
         table.add(pauseButton).top().pad(0.5f).left();
-        table.add(statusDrawer).expandX().right().top();
-        table.row();
-        table.add(overlayMenuTable).colspan(2).expand().center();
-        overlayMenuTable.setVisible(false);
+        table.add(statusDrawer).expand().right().top();
+
+        //table.add(overlayMenuTable).colspan(2).expand().center();
+        //overlayMenuTable.setOrigin(1);
 
         this.addActor(table);
+        this.addActor(overlayMenuTable);
     }
 
     public void gameOver(int finalScore){
@@ -140,7 +156,30 @@ public class HUD  extends Stage{
 
     }
 
-    public void update(float delta, int score){
+    public void update(float delta){
         this.act(delta);
+        updateTicks++;
+        if (updateTicks > 70){
+            updateTicks = 0;
+            float x = Gdx.input.getAccelerometerX();
+            float y = Gdx.input.getAccelerometerY();
+            boolean isHorizontal = overlayMenuTable.getRotation() == 0 || overlayMenuTable.getRotation() == 180;
+            if (isHorizontal && (y*y > x*x) ){
+                Gdx.app.log(TAG, "switched to vertical");
+                if (y>0)
+                    overlayMenuTable.addAction(Actions.rotateTo(90,0.7f, Interpolation.elastic));
+                else
+                    overlayMenuTable.addAction(Actions.rotateTo(270,0.7f, Interpolation.elastic));
+                pauseButton.addAction(Actions.rotateTo(90,0.4f, Interpolation.elastic));
+            }
+            else if (!isHorizontal && (y*y <= x*x) ) {
+                Gdx.app.log(TAG, "switched to horizontal");
+                if (x<0)
+                    overlayMenuTable.addAction(Actions.rotateTo(180,0.7f, Interpolation.elastic));
+                else
+                    overlayMenuTable.addAction(Actions.rotateTo(0,0.7f, Interpolation.elastic));
+                pauseButton.addAction(Actions.rotateTo(0,0.4f, Interpolation.elastic));
+            }
+        }
     }
 }

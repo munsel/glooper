@@ -196,6 +196,7 @@ public class Hero implements IHero, Safeable, Disposable {
         Gdx.app.log(TAG, "ima contact action");
         if (fixture.getFilterData().categoryBits == Box2DCategoryBits.FOOD) {
             Gdx.app.log(TAG, "hero's got some food YA");
+            Gdx.input.vibrate(20);
             stamina += 0.4;
             if (stamina > 1) stamina = 1;
             model.addToScore(1);

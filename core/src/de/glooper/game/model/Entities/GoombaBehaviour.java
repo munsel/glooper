@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import de.glooper.game.model.Heros.Hero;
 
 /**
@@ -23,6 +24,8 @@ public class GoombaBehaviour implements IEntityBehaviour{
         this.hero = hero;
         this.parent = entity;
         updateVelocity = new Vector2();
+        entity.getBody().getFixtureList().get(0).setSensor(false);
+        entity.getBody().setType(BodyDef.BodyType.DynamicBody);
     }
 
 

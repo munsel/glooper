@@ -84,7 +84,7 @@ public class WorldModel implements Safeable, Disposable {
             //hud.update(delta, saveState.addToScore(1));//+1 every frame
             clouds.update(delta);
         }
-        hud.update(delta, saveState.getScore());//only score
+        hud.update(delta);//only score
     }
 
     public void init(){
