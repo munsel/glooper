@@ -1,5 +1,6 @@
 package de.glooper.game.model.Entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -12,7 +13,7 @@ import de.glooper.game.model.Heros.Hero;
  */
 public class GoombaBehaviour implements IEntityBehaviour{
 
-    private final float VELOCITY = 1.2f;
+    private final float VELOCITY = 1.5f;
 
     private Hero hero;
     private IEntity parent;
@@ -24,8 +25,11 @@ public class GoombaBehaviour implements IEntityBehaviour{
         this.hero = hero;
         this.parent = entity;
         updateVelocity = new Vector2();
-        entity.getBody().getFixtureList().get(0).setSensor(false);
-        entity.getBody().setType(BodyDef.BodyType.DynamicBody);
+        //entity.getBody().getFixtureList().get(0).setSensor(false);
+        Body body  = entity.getBody();
+        body.setType(BodyDef.BodyType.DynamicBody);
+        Gdx.app.log("Goombatype", body.getType().toString());
+        Gdx.app.log("Goomba", "changed to dynamic");
     }
 
 

@@ -48,7 +48,7 @@ public class TileObjectUtil {
                                 ((PolylineMapObject) object).getPolyline().getX()/PPM,
                                 ((PolylineMapObject) object).getPolyline().getY()/PPM,
                                 SEAWEED_WIDTH, SEAWEED_HEIGHT,
-                                Box2DCategoryBits.FOOD);
+                                Box2DCategoryBits.FOOD, BodyDef.BodyType.StaticBody);
                         entity.setBehaviour(new FoodBehaviour(entity));
                         entities.add(entity);
                         continue;
@@ -62,7 +62,7 @@ public class TileObjectUtil {
                                 ((PolylineMapObject) object).getPolyline().getX()/PPM,
                                 ((PolylineMapObject) object).getPolyline().getY()/PPM,
                                 GOOMBA_WIDTH, GOOMBA_HEIGHT,
-                                Box2DCategoryBits.ENEMY);
+                                Box2DCategoryBits.ENEMY, BodyDef.BodyType.DynamicBody);
                         entity.setBehaviour(new GoombaBehaviour(hero,entity));
                         entities.add(entity);
                         continue;

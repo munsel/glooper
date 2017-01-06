@@ -1,5 +1,6 @@
 package de.glooper.game.model.Entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.TextureArray;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -40,23 +41,25 @@ public class Entity implements IEntity {
 
     Array<IEntity> container;
 
+    private BodyDef.BodyType bodyType;
 
-    public Entity(Array<IEntity> container,World world,
+
+    public Entity(Array<IEntity> container, World world,
                   TextureAtlas atlas, String name,
                   float x, float y,
                   float width, float height,
-                  short categoryBits){
+                  short categoryBits, BodyDef.BodyType bodyType){
         this(container, world, new Animation(.15f, atlas.getRegions()),
-                name, x,y,width,height,categoryBits);
+                name, x,y,width,height,categoryBits, bodyType);
     }
 
     public Entity(Array<IEntity> container, World world,
                   TextureRegion[] regions, String name,
                   float x, float y,
                   float width, float height,
-                  short categoryBits){
+                  short categoryBits, BodyDef.BodyType bodyType){
         this(container, world, new Animation(.05f, regions),
-                name, x,y,width,height,categoryBits);
+                name, x,y,width,height,categoryBits,bodyType);
     }
 
     public static TextureRegion[] getFramesFromSpritesheet(int nSprites,
@@ -78,11 +81,11 @@ public class Entity implements IEntity {
     }
 
 
-    public Entity(Array<IEntity> container,World world,
+    public Entity(Array<IEntity> container, World world,
                   Animation animation, String name,
                   float x, float y,
                   float width, float height,
-                  short categoryBits){
+                  short categoryBits, BodyDef.BodyType bodyType){
         this.container = container;
         this.x = x;
         this.y = y;
@@ -92,6 +95,7 @@ public class Entity implements IEntity {
         this.world = world;
         this.categoryBits = categoryBits;
         this.animation = animation;
+        this.bodyType = bodyType;
         sprite = new Sprite();
         sprite.setSize(width, height);
         sprite.setOrigin( width/2, height/2);
@@ -216,12 +220,12 @@ public class Entity implements IEntity {
         BodyDef bdef = new BodyDef();
         bdef.position.set(x+width*.5f, y+height*.5f);
         //bdef.type = BodyDef.BodyType.StaticBody;
-        bdef.type = BodyDef.BodyType.DynamicBody;
+        bdef.type = bodyType;
         FixtureDef fdef = new FixtureDef();
         fdef.density = 1;
-        fdef.friction = 1;
+        fdef.friction = 0;
         fdef.restitution = 0;
-        fdef.isSensor = true;
+        //fdef.isSensor = true;
         fdef.filter.categoryBits = categoryBits;
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(width*.5f, height*.5f);
@@ -234,6 +238,7 @@ public class Entity implements IEntity {
         body.setUserData(new EntityBodyData());
 
         shape.dispose();
+        Gdx.app.log("Entity", "created body");
     }
 
     @Override
