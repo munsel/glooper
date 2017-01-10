@@ -13,7 +13,7 @@ import de.glooper.game.model.Heros.Hero;
  */
 public class GoombaBehaviour implements IEntityBehaviour{
 
-    private final float VELOCITY = 1.5f;
+    private final float VELOCITY = 1.76f;
 
     private Hero hero;
     private IEntity parent;

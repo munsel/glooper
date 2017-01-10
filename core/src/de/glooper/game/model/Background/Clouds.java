@@ -39,7 +39,7 @@ public class Clouds implements IBackground {
         cloudsV2 = new Array<Sprite>();
         cloudsV3 = new Array<Sprite>();
         createClouds(cloudsV1, 10);
-        createClouds(cloudsV2,10);
+        createClouds(cloudsV2, 10);
         createClouds(cloudsV3, 10);
     }
     public void init(){
@@ -51,11 +51,11 @@ public class Clouds implements IBackground {
     private void createClouds(Array<Sprite> clouds, int nClouds) {
         for (int nCloud = 0; nCloud < nClouds; nCloud++) {
             Sprite sprite = new Sprite(cloudsRegions[MathUtils.random(5)]);
-            float scaleFactor = MathUtils.random(4);
+            float scaleFactor = MathUtils.random(2,12);
             sprite.setSize(scaleFactor*1, scaleFactor*1.5f);
             float red = MathUtils.random()*.1f;
-            float green = red + MathUtils.random()*.01f;
-            float blue = red + MathUtils.random()*.01f;
+            float green =  MathUtils.random()*.02f;
+            float blue =  MathUtils.random()*.05f;
             Color cloudTint = new Color(red,green,blue, 1);
             sprite.setColor(cloudTint);
             //sprite.setColor(0x223344FF);
@@ -68,6 +68,8 @@ public class Clouds implements IBackground {
             float randPosX = camera.position.x-camera.viewportWidth/2+ MathUtils.random(camera.viewportWidth);
             float randPosY = camera.position.y-camera.viewportHeight/2+ MathUtils.random(camera.viewportWidth);
             sprite.setPosition(randPosX, randPosY);
+            sprite.setOriginCenter();
+            sprite.setRotation(MathUtils.random(180));
         }
     }
 
@@ -96,8 +98,7 @@ public class Clouds implements IBackground {
                 cloud.getX() +movingDirection.x*velocity*delta,
                 cloud.getY() +movingDirection.y*velocity*delta
         );
-
-
+        cloud.setRotation(cloud.getRotation()+delta*MathUtils.random());
     }
 
 

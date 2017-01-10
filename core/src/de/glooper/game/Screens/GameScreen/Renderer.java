@@ -53,10 +53,10 @@ public class Renderer implements Disposable {
     public static final Vector3 LIGHT_POS = new Vector3(0f,0f,DEFAULT_LIGHT_Z);
 
     //Light RGB and intensity (alpha)
-    public static final Vector3 LIGHT_COLOR = new Vector3(1f, 0.9f, 0.8f);
+    public static final Vector3 LIGHT_COLOR = new Vector3(1f, 0.9f, 1f);
 
     //Ambient RGB and intensity (alpha)
-    public static final Vector3 AMBIENT_COLOR = new Vector3(0.6f, 0.7f, 0.8f);
+    public static final Vector3 AMBIENT_COLOR = new Vector3(0.9f, 0.9f, 0.8f);
 
     //Attenuation coefficients for light falloff
     public static final Vector3 FALLOFF = new Vector3(.3f, .3f, 3f);
@@ -220,7 +220,7 @@ shader.end();
 
         //long elapsedTime = System.nanoTime() - start;
         //Gdx.app.log(TAG,Long.toString(elapsedTime));
-        debugRenderings();
+        //debugRenderings();
         hud.draw();
         //camera.zoom = 15;
     }
